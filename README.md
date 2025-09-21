@@ -1,6 +1,6 @@
 # Alejandro Ines — Photography Portfolio
 
-#### Video Demo: <PASTE YOUTUBE URL>
+#### Video Demo: https://youtu.be/QMTZ2I8o7cI
 ### Live Deployment (via Render): https://aiphotographywebsiteblog.onrender.com/
 #### GitHub Repo:https://github.com/YOURUSERNAME/YOURPROJECT.git
 
