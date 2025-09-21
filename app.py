@@ -5,7 +5,7 @@ from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-key")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "***REMOVED***")
+ADMIN_PASSWORD = os.environ["ADMIN_PASSWORD"]
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "database.db")
 

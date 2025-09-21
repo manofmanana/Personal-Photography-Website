@@ -1,6 +1,7 @@
 # Alejandro Ines Photography Portfolio
 
 #### Video Demo: <URL HERE>
+#### Deployed Site(via Render): https://aiphotographywebsiteblog.onrender.com/
 #### Description:
 This project is my CS50x Final Project: a full-stack photography portfolio and blog website built using **Flask, SQLite, HTML, CSS, and JavaScript**.
 It allows me to showcase my photography, write blog entries, and interact with visitors via a contact form and subscriber system.

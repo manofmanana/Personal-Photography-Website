@@ -29,11 +29,15 @@
         <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
       </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0" onsubmit="return false;">
-      <input id="siteSearch" class="form-control form-control-sm mr-2" type="search" placeholder="Search the site">
-      <button id="searchBtn" class="btn btn-outline-light btn-sm mr-2" type="button">Go</button>
-    </form>
-    <button id="toggleTheme" class="btn btn-copper btn-sm" type="button" aria-pressed="false">Theme</button>
+
+    <!-- Tools -->
+    <div class="navbar-tools d-flex align-items-center">
+      <form class="form-inline my-2 my-md-0 mr-md-2 flex-nowrap" onsubmit="return false;">
+        <input id="siteSearch" class="form-control form-control-sm mr-2" type="search" placeholder="Search the site">
+        <button id="searchBtn" class="btn btn-outline-light btn-sm" type="button">Go</button>
+      </form>
+      <button id="toggleTheme" class="btn btn-copper btn-sm" type="button" aria-pressed="false">Theme</button>
+    </div>
   </div>
 </nav>
 
@@ -111,6 +115,27 @@
   }
   .bg-fade.bg-loaded::after {
     opacity: 0;
+  }
+
+  /* Mobile adjustments only */
+  @media (max-width: 767.98px) {
+    .navbar-tools {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+    .navbar-tools form {
+      flex-direction: column;
+      width: 100%;
+    }
+    .navbar-tools input,
+    .navbar-tools button {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+    .navbar-tools #toggleTheme {
+      margin-top: 0;
+    }
   }
 </style>
 

@@ -75,9 +75,9 @@
     <!-- Featured Work -->
     <section class="mb-5">
       <h2 class="section-title text-white">Featured Work</h2>
-      <div class="card-deck">
+      <div class="card-deck flex-wrap">
         <!-- Nature -->
-        <a href="{{ url_for('gallery') }}?filter=nature" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none">
+        <a href="{{ url_for('gallery') }}?filter=nature" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none mb-3">
           <img class="card-img-top featured-img" src="{{ url_for('static', filename='photos/hero/featured/IMG_7855.jpeg') }}" alt="Nature">
           <div class="card-body bg-white">
             <h5 class="card-title text-dark">Nature</h5>
@@ -86,7 +86,7 @@
           </div>
         </a>
         <!-- Portraits -->
-        <a href="{{ url_for('gallery') }}?filter=portraits" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none">
+        <a href="{{ url_for('gallery') }}?filter=portraits" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none mb-3">
           <img class="card-img-top featured-img" src="{{ url_for('static', filename='photos/hero/featured/IMG_8613.jpeg') }}" alt="Portraits">
           <div class="card-body bg-white">
             <h5 class="card-title text-dark">Portraits</h5>
@@ -95,7 +95,7 @@
           </div>
         </a>
         <!-- Experimental -->
-        <a href="{{ url_for('gallery') }}?filter=experimental" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none">
+        <a href="{{ url_for('gallery') }}?filter=experimental" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none mb-3">
           <img class="card-img-top featured-img" src="{{ url_for('static', filename='photos/hero/featured/IMG_5783.jpeg') }}" alt="Experimental">
           <div class="card-body bg-white">
             <h5 class="card-title text-dark">Experimental</h5>
@@ -112,7 +112,7 @@
       <p class="mb-2 text-white">Get one photo + the latest blog in your inbox.</p>
       <form action="{{ url_for('subscribe') }}" method="POST" id="signupForm" class="form-inline flex-wrap" novalidate>
         <label class="sr-only" for="email">Email</label>
-        <input id="email" name="email" type="email" class="form-control mr-2 mb-2" placeholder="you@example.com" required>
+        <input id="email" name="email" type="email" class="form-control mr-2 mb-2 flex-grow-1" placeholder="you@example.com" required>
         <button class="btn btn-copper mb-2" type="submit">Subscribe</button>
       </form>
     </section>
@@ -124,6 +124,7 @@
   :root { --copper: #b87333; }
 
   .hero-wrap { position: relative; }
+  .hero-img { object-fit: cover; }
 
   /* Background */
   .home-background {
@@ -207,7 +208,7 @@
                    0 0 95px rgba(217,134,63,0.92); }
   }
 
-  /* Ripple Waves - denser, closer, with glow halo */
+  /* Ripple Waves */
   .copper-sphere .ripple {
     position: absolute;
     top: 50%;
@@ -217,7 +218,7 @@
     border-radius: 50%;
     transform: translate(-50%, -50%);
     border: 3px solid rgba(184, 115, 51, 0.7);
-    box-shadow: 0 0 25px rgba(184,115,51,0.6); /* halo glow */
+    box-shadow: 0 0 25px rgba(184,115,51,0.6);
     animation: ripple 3s linear infinite;
   }
   .ripple1 { animation-delay: 0s; }
@@ -257,6 +258,51 @@
   .blockquote-footer::before {
     content: "~ ";
     color: inherit !important;
+  }
+
+  /* --- MOBILE OPTIMIZATION --- */
+  @media (max-width: 768px) {
+    .copper-sphere {
+      width: 260px;
+      height: 260px;
+      top: 12%;
+    }
+    .copper-sphere h1 {
+      font-size: 1.3rem;
+      line-height: 1.4;
+      padding: 0 10px;
+    }
+    .copper-sphere .ripple {
+      width: 260px;
+      height: 260px;
+    }
+    .card-deck {
+      display: flex;
+      flex-direction: column;
+    }
+    .card {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    #signupForm input {
+      flex: 1 1 100%;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .copper-sphere {
+      width: 200px;
+      height: 200px;
+      top: 10%;
+    }
+    .copper-sphere h1 {
+      font-size: 1rem;
+    }
+    .copper-sphere .ripple {
+      width: 200px;
+      height: 200px;
+    }
   }
 </style>
 
