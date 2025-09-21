@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% block title %}Search Results — Alejandro Ines{% endblock %}
+{% block body %}
+<main class="search-background d-flex flex-column">
+  <div class="container py-5">
+    <h1 class="page-title text-white">Search Results</h1>
+
+    {% if query %}
+      <p class="mb-4 text-white">Results for "<strong>{{ query }}</strong>":</p>
+    {% endif %}
+
+    <!-- Blog Results -->
+    {% if post_results %}
+      <h2 class="section-title mb-3 text-white">Blog Posts</h2>
+      {% for r in post_results %}
+        <article class="post mb-5 pb-4">
+          <h2 class="post-title">
+            <a href="{{ url_for('post_detail', post_id=r.id) }}" class="text-white">
+              {{ r.title }}
+            </a>
+          </h2>
+          <p class="post-meta">{{ r.kind }} • {{ r.created }}</p>
+
+          {% if r.image_url %}
+          <div class="post-image-wrapper mb-3">
+            <a href="{{ url_for('post_detail', post_id=r.id) }}">
+              <img class="post-image" src="{{ r.image_url }}" alt="{{ r.title }}">
+            </a>
+          </div>
+          {% endif %}
+
+          <div class="post-body">
+            <p>
+              {{ r.body[:250]|replace(query, "<mark>" ~ query ~ "</mark>")|safe }}
+              {% if r.body|length > 250 %}...{% endif %}
+            </p>
+            <a href="{{ url_for('post_detail', post_id=r.id) }}" class="read-more">Read More →</a>
+          </div>
+        </article>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Photo Results -->
+    {% if photo_results %}
+      <h2 class="section-title mb-3 mt-5 text-white">Photos</h2>
+      <div class="row">
+        {% for p in photo_results %}
+        <div class="col-md-4 mb-4 text-center">
+          <div class="photo-card">
+            <a href="{{ url_for('gallery') }}?filter={{ p.tag }}">
+              <img src="{{ p.filename }}" alt="{{ p.tag }}" class="img-fluid photo-thumb">
+            </a>
+            <p class="mt-2 text-white"><strong>{{ p.tag|capitalize }}</strong> • {{ p.created }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if not post_results and not photo_results %}
+      <p class="text-white">No results found.</p>
+    {% endif %}
+  </div>
+</main>
+
+<style>
+  .search-background {
+    background: url("{{ url_for('static', filename='photos/search/IMG_0714.jpeg') }}") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  .search-background::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: -1;
+  }
+
+  .post {
+    position: relative;
+    z-index: 2;
+    background-color: rgba(128,128,128,0.9);
+    padding: 20px;
+    border-radius: 8px;
+    border: 4px solid #b87333;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  }
+
+  /* Force all search-related text white */
+  .page-title,
+  .section-title,
+  .post-title,
+  .post-meta,
+  .post-body,
+  .post-body p,
+  .read-more,
+  .photo-card p,
+  .text-white,
+  .no-results {
+    color: #fff !important;
+  }
+
+  .post-title a {
+    color: #fff !important;
+    text-decoration: none;
+  }
+  .post-title a:hover {
+    text-decoration: underline;
+  }
+
+  .read-more {
+    display: inline-block;
+    margin-top: 10px;
+    color: #f0c49c !important;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .read-more:hover {
+    color: #fff !important;
+    text-decoration: underline;
+  }
+
+  .post-image-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  .post-image {
+    max-width: 45%;
+    border: 10px solid #4a2f2a;
+    border-radius: 12px;
+    box-shadow: 0 0 0 6px #5a3a33, 0 4px 6px rgba(0,0,0,0.6);
+    animation: pulse 10s ease-in-out infinite;
+    transition: transform 0.6s ease, box-shadow 0.6s ease;
+  }
+
+  .post-image:hover {
+    transform: scale(1.05) rotate(-1.5deg);
+    box-shadow: 0 0 20px rgba(184,115,51,0.8), 0 6px 15px rgba(0,0,0,0.6);
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 6px #5a3a33, 0 4px 6px rgba(0,0,0,0.6);
+    }
+    50% {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 6px #5a3a33, 0 6px 10px rgba(0,0,0,0.65);
+    }
+  }
+
+  /* Photo results */
+  .photo-card {
+    background-color: rgba(128,128,128,0.85);
+    padding: 10px;
+    border-radius: 8px;
+    border: 3px solid #b87333;
+  }
+  .photo-thumb {
+    border-radius: 6px;
+    max-height: 250px;
+    object-fit: cover;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .photo-thumb:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(184,115,51,0.8);
+  }
+
+  /* Highlight search term */
+  mark {
+    background: #b87333;
+    color: #fff;
+    padding: 0 2px;
+    border-radius: 2px;
+  }
+</style>
+{% endblock %}

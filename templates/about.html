@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% block title %}About — Alejandro Ines{% endblock %}
+{% block body %}
+<main class="about-background d-flex flex-column">
+  <div class="container py-5">
+    <h1 class="page-title about-title">About</h1>
+
+    <div class="row">
+      <div class="col-md-7">
+        <!-- Shiny Copper Background Box -->
+        <div class="about-box p-4 mb-4">
+          <p class="lead">Hola, I’m Alejandro. I built this website from scratch because I love tech, photography, and learning new things.</p>
+          <p>I'm a Mexican American photographer and a student of data science. I was raised by my marvelous mom, my abuelita, and my extended family. I started college at sixteen, graduated at twenty one, and I am preparing to begin a master’s program in data science next year. I have worked in banking, public accounting, technology and AI, and pharmaceutical manufacturing. Each job taught me something about systems and about how easily I can adapt.</p>
+          <p>I recently had spine surgery, and had a lot of time to reflect on life. I enjoy spending time with my loved ones a lot; my family, my girlfriend Juliet, and my friends (too many to name). While I am not rich in money (yet), I am comforted by the fact that I have an abundance of love around me.</p>
+          <p>I fell in love with photography about two years ago now, and I see it as a data collection tool of sorts. Cameras collect data on where light was at a given moment. We as humans then give that light, that data, meaning.</p>
+          <p>I appreciate you checking out my site, and I hope that you find the bravery to pursue your talents as well. Once all struggle is grasped, miracles are possible.</p>
+        </div>
+
+        <hr>
+        <figure class="mb-4">
+          <blockquote class="styled-quote small">
+            <p class="mb-2">"It's never as bad as it seems. You're much stronger than you think you are. Trust me."</p>
+            <figcaption class="blockquote-footer">Superman, the Man of Tomorrow</figcaption>
+          </blockquote>
+        </figure>
+
+        <!-- Arsenal normal (no box) -->
+        <h2 class="h5 mt-4 arsenal-title">Photo Arsenal</h2>
+        <ul class="list-group list-group-flush mb-4 arsenal-list">
+          <li class="list-group-item bg-transparent d-flex align-items-center">
+            <img src="{{ url_for('static', filename='photos/about/Gear/a7cii.webp') }}" alt="Sony A7C II" class="mr-2 arsenal-img">
+            <span class="arsenal-text">Sony A7CII</span>
+          </li>
+          <li class="list-group-item bg-transparent d-flex align-items-center">
+            <img src="{{ url_for('static', filename='photos/about/Gear/drone.jpg') }}" alt="HoverX1 Drone" class="mr-2 arsenal-img">
+            <span class="arsenal-text">HoverX1 Drone</span>
+          </li>
+          <li class="list-group-item bg-transparent d-flex align-items-center">
+            <img src="{{ url_for('static', filename='photos/about/Gear/filmcam.jpg') }}" alt="Olympus Stylus 35mm" class="mr-2 arsenal-img">
+            <span class="arsenal-text">Olympus Stylus 35mm</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="col-md-5 text-center">
+        <div class="bio-photo-wrap mb-4">
+          <img class="img-fluid bio-frame" src="{{ url_for('static', filename='photos/about/IMG_6527.jpeg') }}" alt="Alejandro portrait">
+        </div>
+        <div class="bio-photo-wrap mb-4">
+          <img class="img-fluid bio-frame" src="{{ url_for('static', filename='photos/about/IMG_6742.jpeg') }}" alt="Field notes">
+        </div>
+
+        <!-- Admin Button -->
+        <div class="text-right">
+          <a href="{{ url_for('admin_login') }}" class="btn btn-copper mt-3">Admin</a>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-5">
+
+    <!-- Climate Countdown -->
+    <section class="text-center climate-section">
+      <h2 class="section-title">Climate Clock</h2>
+      <p class="climate-desc">A countdown until climate change becomes irreversible. We all must do our best to take care of Mother Earth.</p>
+      <div id="climateClock" class="d-flex flex-wrap justify-content-center text-center mb-3">
+        <div class="clock-box"><span id="years">0</span><small>Years</small></div>
+        <div class="clock-box"><span id="days">0</span><small>Days</small></div>
+        <div class="clock-box"><span id="hours">0</span><small>Hours</small></div>
+        <div class="clock-box"><span id="minutes">0</span><small>Minutes</small></div>
+        <div class="clock-box"><span id="seconds">0</span><small>Seconds</small></div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Styles -->
+<style>
+  .about-background {
+    background: url("{{ url_for('static', filename='photos/hero/IMG_1328.jpeg') }}") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+  .about-background::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+  }
+
+  /* Shiny Copper Bio Box */
+  .about-box {
+    background: linear-gradient(145deg, rgba(205,133,63,0.95), rgba(184,115,51,0.95), rgba(139,69,19,0.95));
+    border-radius: 8px;
+    padding: 1.5rem;
+    color: #fff; /* white text inside */
+    box-shadow: 0 0 20px rgba(184,115,51,0.6);
+    background-size: 200% 200%;
+    animation: shineMove 6s linear infinite;
+  }
+  @keyframes shineMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Force About title white */
+  .about-title {
+    color: #fff !important;
+  }
+
+  /* Arsenal section permanently white */
+  .arsenal-title,
+  .arsenal-text {
+    color: #fff !important;
+  }
+
+  /* Theme-aware text */
+  .theme-dark .about-background { color: #fff; }
+  .theme-light .about-background { color: #111; }
+
+  /* Arsenal images copper frame + hover pop */
+  .arsenal-img {
+    width: 100px; height: 100px; object-fit: cover;
+    border: 3px solid #b87333;
+    border-radius: 0.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .arsenal-img:hover {
+    transform: scale(1.08);
+    box-shadow: 0 0 20px rgba(184,115,51,0.6);
+  }
+
+  /* Bio photos */
+  .bio-photo-wrap {
+    display: inline-block;
+    padding: 6px;
+    background: #111;
+    border: 5px solid #b87333;
+    border-radius: 1rem;
+    transition: box-shadow 0.3s ease;
+  }
+  .bio-frame {
+    border-radius: 0.75rem;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .bio-photo-wrap:hover { box-shadow: 0 0 25px rgba(184,115,51,0.75); }
+  .bio-frame:hover { transform: scale(1.03); }
+
+  /* Superman quote */
+  blockquote.styled-quote {
+    background-color: rgba(50,50,50,0.9);
+    border-left: 4px solid #b87333 !important;
+    padding: 1rem;
+    border-radius: 8px;
+    color: #fff;
+  }
+  blockquote.styled-quote p {
+    color: #fff !important;
+  }
+  blockquote .blockquote-footer { color: #fff; }
+
+  /* Copper-styled Admin button */
+  .btn-copper {
+    background-color: #b87333;
+    border: 2px solid #b87333;
+    color: #fff;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  .btn-copper:hover {
+    background-color: #d68642;
+    border-color: #d68642;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(184,115,51,0.5);
+  }
+
+  /* Climate Clock */
+  .climate-section h2,
+  .climate-section p {
+    color: #fff !important; /* permanently white */
+  }
+  #climateClock { gap: 1rem; }
+  .clock-box {
+    background: #111;
+    color: #fff;
+    border: 2px solid #b87333;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    min-width: 100px;
+  }
+  .clock-box span {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #f0c49c; /* copper */
+  }
+  .clock-box small { display: block; margin-top: 0.25rem; font-size: 0.85rem; color: #fff; }
+</style>
+
+<!-- Script -->
+<script>
+  const targetDate = new Date("2035-01-01T00:00:00Z");
+  function updateClock() {
+    const now = new Date();
+    const diff = targetDate - now;
+    if (diff <= 0) return;
+
+    const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+    const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById("years").innerText = years;
+    document.getElementById("days").innerText = days;
+    document.getElementById("hours").innerText = hours;
+    document.getElementById("minutes").innerText = minutes;
+    document.getElementById("seconds").innerText = seconds;
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+</script>
+{% endblock %}

@@ -1,0 +1,264 @@
+:root {
+  --cobalt: #1546A0;
+  --cobalt-2: #1e5bd6;
+  --cobalt-3: #4a90e2;
+  --cobalt-4: #003366;
+  --ink: #0b1220;
+  --paper: #f7f3ea;
+  --text-light: #eaf1ff;
+  --text-mid: #c9d4ea;
+  --accent: #ffc107;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.65;
+}
+
+/* ===========================
+   THEME: LIGHT
+   =========================== */
+html.theme-light body {
+  background: #f4f7ff;
+  color: #1b2430;
+}
+
+/* Navbar */
+html.theme-light .navbar {
+  background: #dbeafe;
+  color: #0b1220;
+  border-bottom: 1px solid rgba(0,0,0,.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+}
+html.theme-light .navbar .navbar-brand,
+html.theme-light .navbar .nav-link {
+  color: #0b1220 !important;
+}
+html.theme-light .navbar .nav-link:hover,
+html.theme-light .navbar .nav-link:focus,
+html.theme-light .navbar .nav-link.active {
+  color: var(--cobalt-2) !important;
+  font-weight: 600;
+}
+html.theme-light .navbar .form-control {
+  border: 1px solid var(--cobalt-2);
+}
+html.theme-light .navbar #searchBtn {
+  color: #fff !important;
+  background-color: var(--cobalt-2) !important;
+  border-color: var(--cobalt-2) !important;
+}
+html.theme-light .navbar #searchBtn:hover {
+  background-color: var(--cobalt-3) !important;
+  border-color: var(--cobalt-3) !important;
+}
+
+/* Sections */
+html.theme-light .section-title { color: #0b1220; }
+html.theme-light .styled-quote { border-left: 4px solid var(--cobalt-2); color: #1b2430; }
+
+/* Cards */
+html.theme-light .card,
+html.theme-light .list-group-item { background: #fff; color: #1b2430; }
+
+/* Modal */
+html.theme-light .modal-content { background: #fff; color: #111; }
+
+/* Footer */
+html.theme-light .site-footer {
+  background: #f7f7f7;
+  color: #222;
+}
+
+/* Climate Clock */
+html.theme-light .clock-seg {
+  background: #e2e8f0;
+  color: #0b1220;
+}
+
+/* Blog posts */
+html.theme-light .post-body p { color: #1b2430; }
+
+/* ===========================
+   THEME: DARK
+   =========================== */
+html.theme-dark body {
+  background: radial-gradient(1200px 500px at 50% -20%, #4b79ff22, transparent), #0b1220;
+  color: var(--text-light);
+}
+
+/* Navbar */
+html.theme-dark .navbar {
+  background: linear-gradient(
+    90deg,
+    var(--cobalt),
+    var(--cobalt-2),
+    var(--cobalt-3),
+    var(--cobalt-4)
+  );
+  color: var(--text-light);
+}
+html.theme-dark .navbar .nav-link { color: var(--text-light) !important; }
+html.theme-dark .navbar .nav-link:hover,
+html.theme-dark .navbar .nav-link.active { color: var(--accent) !important; }
+
+/* Sections */
+html.theme-dark .section-title { color: var(--text-light); }
+html.theme-dark .styled-quote { border-left: 4px solid var(--accent); color: var(--text-light); }
+
+/* Cards */
+html.theme-dark .card,
+html.theme-dark .list-group-item { background: #111827; color: #e5edf8; }
+
+/* Modal */
+html.theme-dark .modal-content { background: #111827; color: #e5edf8; }
+
+/* Footer */
+html.theme-dark .site-footer {
+  background: #0a1020;
+  color: #eaf1ff;
+}
+
+/* Climate Clock */
+html.theme-dark .clock-seg {
+  background: #0f1a33;
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--text-light);
+}
+
+/* Blog posts */
+html.theme-dark .post-body p { color: #eef3ff; }
+
+/* ===========================
+   SHARED STYLES
+   =========================== */
+
+/* Navbar transition smoothing */
+html.theme-dark .navbar,
+html.theme-light .navbar {
+  transition: background-color 0.5s ease,
+              background-image 0.5s ease,
+              color 0.5s ease,
+              box-shadow 0.5s ease,
+              border-color 0.5s ease;
+}
+
+/* Headings */
+h1, h2, h3, h4, .font-logo, .page-title, .section-title {
+  font-family: "Playfair Display", Georgia, Cambria, "Times New Roman", Times, serif;
+}
+.font-logo { font-weight: 700; letter-spacing: .3px; }
+
+/* Hero Carousel */
+.hero-wrap {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+.hero-img {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+}
+
+/* Copper Sphere Overlay */
+.copper-sphere {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #c97b47, #8b4513, #4a2c16);
+  box-shadow: inset -20px -20px 40px rgba(0,0,0,0.4),
+              inset 20px 20px 40px rgba(255,255,255,0.2),
+              0 20px 40px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.hero-title {
+  font-family: "Playfair Display", serif;
+  font-size: 1.6rem;
+  line-height: 1.4;
+  color: #f8f8f8;
+  padding: 1rem;
+}
+
+/* Carousel Controls */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: invert(34%) sepia(91%) saturate(600%) hue-rotate(190deg) brightness(90%) contrast(90%);
+}
+.carousel-indicators li { background-color: var(--cobalt-2); }
+.carousel-indicators .active { background-color: var(--accent); }
+
+/* Cards */
+.card-hover {
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 1rem 2rem rgba(0,0,0,.35);
+}
+.equal-card { display: flex; flex-direction: column; }
+.equal-card .card-body { flex-grow: 1; }
+
+/* Footer */
+.site-footer {
+  padding: 2rem 0;
+  border-top: 1px solid rgba(0,0,0,.06);
+  text-align: center;
+}
+.site-footer small { color: inherit; }
+
+/* Climate Clock wrapper */
+.clock-wrap {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: "Playfair Display", serif;
+}
+.clock-colon { opacity: .6; }
+
+/* Blog Posts */
+.post { margin-bottom: 3rem; }
+.post-title { font-size: 1.8rem; margin-bottom: .25rem; }
+.post-meta { color: var(--text-mid); margin-bottom: .75rem; }
+
+/* Forms */
+.btn:focus, .form-control:focus {
+  box-shadow: 0 0 0 .2rem rgba(255,193,7,.35);
+}
+.theme-label { font-weight: 600; color: #000; }
+
+/* Page fade transitions */
+.fade-transition {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.9s ease, transform 0.9s ease, background-color 0.3s ease;
+  min-height: 100%;
+}
+html.theme-dark .fade-transition {
+  background-color: #0b1220;
+  color: var(--text-light);
+}
+html.theme-light .fade-transition {
+  background-color: #f4f7ff;
+  color: #1b2430;
+}
+.fade-transition.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .card-deck .card { margin-bottom: 1rem; }
+}

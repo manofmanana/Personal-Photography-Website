@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Admin Login — Alejandro Ines{% endblock %}
+{% block body %}
+<main class="admin-background d-flex flex-column">
+  <div class="container py-5" style="max-width:680px;">
+    <!-- Inline style guarantees white regardless of global styles -->
+    <h1 class="page-title" style="color:#fff !important;">Admin Login</h1>
+    <form method="POST" action="{{ url_for('admin_login') }}">
+      <div class="form-group">
+        <label for="password" class="form-label theme-label">Password</label>
+        <input id="password" name="password" type="password" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-copper">Log in</button>
+    </form>
+  </div>
+</main>
+
+<!-- Styles -->
+<style>
+  .admin-background {
+    background: url("{{ url_for('static', filename='photos/hero/IMG_9365.jpeg') }}") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+  .admin-background::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+  }
+
+  /* Extra-specific backup rule to keep the title white */
+  .admin-background h1.page-title { color:#fff !important; }
+
+  /* Password label always copper */
+  .theme-label,
+  label[for="password"],
+  .form-label[for="password"] {
+    color: #b87333;
+    font-weight: 600;
+  }
+
+  /* Input styling */
+  .form-control { transition: all 0.25s ease; }
+  .theme-dark .form-control {
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid #fff;
+  }
+  .theme-dark .form-control:focus {
+    background-color: rgba(255,255,255,0.15);
+    color: #fff;
+    border-color: #ddd;
+  }
+  .theme-light .form-control {
+    background-color: rgba(0,0,0,0.05);
+    color: #111;
+    border: 1px solid #444;
+  }
+  .theme-light .form-control:focus {
+    background-color: rgba(0,0,0,0.1);
+    color: #111;
+    border-color: #000;
+  }
+
+  /* Copper button */
+  .btn-copper {
+    background-color: #b87333;
+    border: 2px solid #b87333;
+    color: #fff;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  .btn-copper:hover {
+    background-color: #d68642;
+    border-color: #d68642;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(184,115,51,0.5);
+  }
+</style>
+
+<script>
+  // Prevent Enter key from triggering outside the form
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+      e.preventDefault();
+    }
+  });
+</script>
+{% endblock %}

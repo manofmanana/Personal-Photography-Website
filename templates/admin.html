@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block title %}Admin Control Center — Alejandro Ines{% endblock %}
+{% block body %}
+<main class="admin-panel-background d-flex flex-column">
+  <div class="container py-5">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h1 class="page-title" style="color:#4a90e2 !important;">Admin Control Center</h1>
+      <a href="{{ url_for('admin_logout') }}" class="btn btn-logout btn-sm">Log out</a>
+    </div>
+
+    <div class="row">
+      <!-- New Post -->
+      <div class="col-lg-6 mb-4">
+        <div class="card admin-card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">New Post</h5>
+            <form method="POST" action="{{ url_for('admin_panel') }}" enctype="multipart/form-data">
+              <div class="form-group">
+                <label class="theme-label" style="color:#4a90e2 !important;">Title</label>
+                <input name="title" class="form-control" required>
+              </div>
+              <div class="form-group">
+                <label class="theme-label" style="color:#4a90e2 !important;">Kind</label>
+                <select name="kind" class="form-control">
+                  <option>Journal</option>
+                  <option>Note</option>
+                  <option>Essay</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="theme-label" style="color:#4a90e2 !important;">Body</label>
+                <textarea name="body" rows="6" class="form-control" required></textarea>
+              </div>
+              <div class="form-group">
+                <label class="theme-label" style="color:#4a90e2 !important;">Upload Image (optional)</label>
+                <!-- Controlled file input (single) -->
+                <div class="cf-wrap">
+                  <input id="image" type="file" name="image" class="cf-input" accept="image/*">
+                  <label for="image" class="cf-label" style="color:#4a90e2 !important;">no file chosen</label>
+                </div>
+              </div>
+              <button class="btn btn-primary">Publish</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subscribers -->
+      <div class="col-lg-6 mb-4">
+        <div class="card admin-card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">Subscribers</h5>
+            <a class="btn btn-outline-primary btn-sm mb-3" href="{{ url_for('export_subscribers') }}">Export CSV</a>
+            <ul class="list-unstyled mb-0" style="max-height: 260px; overflow:auto;">
+              {% for s in subs %}
+                <li class="mb-1">{{ s["email"] }} <small class="text-muted">• {{ s["created"] }}</small></li>
+              {% else %}
+                <li class="text-muted">No subscribers yet.</li>
+              {% endfor %}
+            </ul>
+            <small class="text-muted d-block mt-2">Use the CSV with your email service (e.g., Buttondown, Mailchimp) to send newsletters.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Posts Table -->
+    <h5 class="mb-3" style="color:#4a90e2 !important;">Posts</h5>
+    <div class="table-responsive mb-5">
+      <table class="table admin-table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Kind</th>
+            <th>Created</th>
+            <th>Image</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in posts %}
+          <tr>
+            <td>{{ p["id"] }}</td>
+            <td>{{ p["title"] }}</td>
+            <td>{{ p["kind"] }}</td>
+            <td>{{ p["created"] }}</td>
+            <td>
+              {% if p["image_url"] %}
+                <span class="text-success">✔</span>
+              {% else %}
+                <span class="text-danger">✘</span>
+              {% endif %}
+            </td>
+            <td>
+              <form class="d-inline" method="POST" action="{{ url_for('admin_delete', post_id=p['id']) }}" onsubmit="return confirm('Delete this post?');">
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6" class="text-muted">No posts yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Gallery Upload -->
+    <h5 class="mb-3" style="color:#4a90e2 !important;">Upload to Gallery</h5>
+    <div class="card admin-card shadow-sm mb-4">
+      <div class="card-body">
+        <form method="POST" action="{{ url_for('gallery_upload') }}" enctype="multipart/form-data">
+          <div class="form-group">
+            <label class="theme-label" style="color:#4a90e2 !important;">Choose Photos</label>
+            <!-- Controlled file input (multiple) -->
+            <div class="cf-wrap">
+              <input id="images" type="file" name="images" class="cf-input" accept="image/*" multiple required>
+              <label for="images" class="cf-label" style="color:#4a90e2 !important;">no file chosen</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="theme-label" style="color:#4a90e2 !important;">Tag</label>
+            <select name="tag" class="form-control" required>
+              <option value="nature">Nature</option>
+              <option value="portraits">Portraits</option>
+              <option value="candids">Candids</option>
+              <option value="experimental">Experimental</option>
+            </select>
+          </div>
+          <button class="btn btn-primary">Upload</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Gallery Table -->
+    <h5 class="mb-3" style="color:#4a90e2 !important;">Gallery Photos</h5>
+    <div class="table-responsive">
+      <table class="table admin-table table-bordered">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Preview</th>
+            <th>Tag</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for g in gallery %}
+          <tr>
+            <td>{{ g["id"] }}</td>
+            <td>
+              <img src="{{ g['filename'] }}" alt="Photo" style="width: 60px; height: 60px; object-fit: cover;" class="rounded shadow-sm">
+            </td>
+            <td>
+              <form method="POST" action="{{ url_for('gallery_edit', photo_id=g['id']) }}" class="d-inline">
+                <select name="tag" class="form-control form-control-sm d-inline-block" style="width:auto;">
+                  <option value="nature" {% if g["tag"]=="nature" %}selected{% endif %}>Nature</option>
+                  <option value="portraits" {% if g["tag"]=="portraits" %}selected{% endif %}>Portraits</option>
+                  <option value="candids" {% if g["tag"]=="candids" %}selected{% endif %}>Candids</option>
+                  <option value="experimental" {% if g["tag"]=="experimental" %}selected{% endif %}>Experimental</option>
+                </select>
+                <button class="btn btn-sm btn-success ml-1">Save</button>
+              </form>
+            </td>
+            <td>{{ g["created"] }}</td>
+            <td>
+              <form class="d-inline" method="POST" action="{{ url_for('gallery_delete', photo_id=g['id']) }}" onsubmit="return confirm('Delete this photo?');">
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="text-muted">No photos yet.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- Styles -->
+<style>
+  .admin-panel-background {
+    background: url("{{ url_for('static', filename='uploads/267387cc48b843848b5668d40526a80e_IMG_8613.jpeg') }}") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+  .admin-panel-background::before {
+    content: "";
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+  }
+
+  /* Theme-aware title (kept for other pages; inline wins here) */
+  .theme-dark .page-title { color: #fff; }
+  .theme-light .page-title { color: #111; }
+
+  /* Controlled File Input */
+  .cf-wrap { position: relative; height: 40px; }
+  .cf-input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+  .cf-label {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; padding: .375rem .75rem;
+    border: 1px dashed rgba(74,144,226,.6);
+    background: transparent;
+    font-weight: 600;
+    pointer-events: none;
+  }
+
+  /* Cards (theme aware) */
+  .admin-card { transition: background-color 0.3s ease, color 0.3s ease; }
+  .theme-dark .admin-card { background-color: #1e3a5f; color: #fff; border: 1px solid #2d4d73; }
+  .theme-light .admin-card { background-color: #fff; color: #111; border: 1px solid #ddd; }
+
+  /* Tables (theme aware) */
+  .admin-table { border-collapse: collapse; width: 100%; }
+  .theme-dark .admin-table { background-color: #1e3a5f; color: #fff; }
+  .theme-dark .admin-table th, .theme-dark .admin-table td { border-color: #2d4d73; }
+  .theme-light .admin-table { background-color: #fff; color: #111; }
+  .theme-light .admin-table th, .theme-light .admin-table td { border-color: #ccc; }
+
+  /* Forms */
+  .theme-dark .form-control { background-color: rgba(255,255,255,0.08); color: #fff; border: 1px solid #2d4d73; }
+  .theme-dark .form-control:focus { background-color: rgba(255,255,255,0.15); border-color: #4a90e2; }
+  .theme-light .form-control { background-color: #f9f9f9; color: #111; border: 1px solid #444; }
+  .theme-light .form-control:focus { background-color: #fff; border-color: #000; }
+
+  /* Log out button */
+  .btn-logout { transition: all 0.25s ease; }
+  .theme-dark .btn-logout { color: #fff; border: 1px solid #fff; }
+  .theme-dark .btn-logout:hover { background: #fff; color: #000; }
+  .theme-light .btn-logout { color: #000; border: 1px solid #000; }
+  .theme-light .btn-logout:hover { background: #000; color: #fff; }
+</style>
+
+<!-- JS for file-label text -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.cf-input').forEach(function (input) {
+      const label = input.nextElementSibling;
+      const setDefault = () => { if (label) label.textContent = 'no file chosen'; };
+      setDefault();
+      input.addEventListener('change', function () {
+        if (!label) return;
+        const files = input.files;
+        if (!files || files.length === 0) { setDefault(); return; }
+        label.textContent = files.length === 1
+          ? files[0].name
+          : Array.from(files).map(f => f.name).join(', ');
+      });
+    });
+  });
+</script>
+{% endblock %}

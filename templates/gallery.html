@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% block title %}Gallery — Alejandro Ines{% endblock %}
+{% block body %}
+<main class="gallery-background d-flex flex-column">
+  <div class="container py-5">
+    <h1 class="page-title mb-4">Gallery</h1>
+
+    <!-- Filters -->
+    <ul class="nav nav-pills mb-4" id="filters">
+      <li class="nav-item"><a class="nav-link active" data-filter="all" href="#">All</a></li>
+      <li class="nav-item"><a class="nav-link" data-filter="nature" href="#">Nature</a></li>
+      <li class="nav-item"><a class="nav-link" data-filter="portraits" href="#">Portraits</a></li>
+      <li class="nav-item"><a class="nav-link" data-filter="candids" href="#">Candids</a></li>
+      <li class="nav-item"><a class="nav-link" data-filter="experimental" href="#">Experimental</a></li>
+    </ul>
+
+    <!-- Photo Grid -->
+    <div class="row" id="grid">
+      {% for photo in photos %}
+      <div
+        class="col-sm-6 col-md-4 mb-4 grid-item {{ photo['tag'] }}"
+        data-tag="{{ photo['tag']|lower }}"
+      >
+        <a href="#" class="lightbox-link" data-index="{{ loop.index0 }}">
+          <img
+            class="img-fluid rounded shadow-sm gallery-img lazy-img"
+            src="{{ photo['filename'] }}"
+            alt="Photo"
+            loading="lazy"
+            style="width:100%; aspect-ratio:1 / 1; object-fit:cover;">
+        </a>
+      </div>
+      {% else %}
+      <p class="text-muted col-12">No photos uploaded yet. Add some in the Admin panel.</p>
+      {% endfor %}
+    </div>
+  </div>
+</main>
+
+<!-- Lightbox Modal with Carousel -->
+<div class="modal fade" id="lightboxModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content bg-dark text-light">
+      <div class="modal-header border-0 justify-content-center" style="background-color: #1546A0;">
+        <h5 class="text-white mb-0" style="font-style: italic; font-size: 1.1rem; text-align: center;">
+          Enjoy the eye candy! ~ Alejandro
+        </h5>
+        <button type="button" class="close text-light position-absolute" style="right: 1rem;" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body p-0">
+        <div id="lightboxCarousel" class="carousel slide" data-ride="carousel" data-interval="false" data-keyboard="true">
+          <div class="carousel-inner"></div>
+          <a class="carousel-control-prev" href="#lightboxCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#lightboxCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom styles -->
+<style>
+  .gallery-background {
+    background: url("{{ url_for('static', filename='photos/hero/IMG_0601.jpeg') }}") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    width: 100%;
+  }
+  .gallery-background::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+  }
+
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    width: 3rem; height: 3rem;
+    background-size: 100% 100%;
+  }
+  .carousel-control-prev-icon:hover,
+  .carousel-control-next-icon:hover {
+    filter: drop-shadow(0 0 5px rgba(255,255,255,0.8));
+  }
+
+  .nav-pills .nav-link {
+    border-radius: 0.5rem;
+    transition: all 0.3s ease;
+  }
+  .nav-pills .nav-link.active {
+    background-color: #1546A0;
+    color: #fff !important;
+  }
+
+  /* Copper frame + lazy fade-in */
+  #grid .gallery-img {
+    border: 4px solid #b87333;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease;
+    opacity: 0;
+  }
+  #grid .gallery-img.loaded { opacity: 1; }
+  #grid .gallery-img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(184,115,51,0.7);
+  }
+
+  /* Fade transitions for filtering */
+  #grid .grid-item {
+    opacity: 1;
+    transition: opacity 0.4s ease;
+  }
+  #grid .grid-item.fade-out { opacity: 0; }
+  #grid .grid-item.d-none { display: none !important; }
+
+  /* Theme-aware page title & filters */
+  .theme-dark .page-title,
+  .theme-dark #filters .nav-link {
+    color: #fff;
+  }
+  .theme-light .page-title,
+  .theme-light #filters .nav-link {
+    color: #111;
+  }
+</style>
+
+<!-- Lightbox wiring + filtering -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var $modal = $('#lightboxModal');
+    var $carousel = $('#lightboxCarousel');
+    var $carouselInner = $('#lightboxCarousel .carousel-inner');
+
+    // Lazy load fade-in
+    $('#grid img.lazy-img').each(function () {
+      var $img = $(this);
+      if (this.complete) {
+        $img.addClass('loaded');
+      } else {
+        $img.on('load', function () {
+          $img.addClass('loaded');
+        });
+      }
+    });
+
+    function buildCarousel(startIndex) {
+      $carouselInner.empty();
+      var visibleItems = $('#grid .grid-item').not('.d-none');
+      visibleItems.each(function (i) {
+        var imgSrc = $(this).find('img').attr('src');
+        var item = $('<div class="carousel-item"><img src="'+imgSrc+'" class="d-block w-100" style="object-fit:contain; max-height:85vh;"></div>');
+        if (i === startIndex) item.addClass('active');
+        $carouselInner.append(item);
+      });
+      preloadNeighbors(startIndex);
+    }
+
+    function preloadNeighbors(index) {
+      var slides = $carouselInner.find('.carousel-item img');
+      [index-1, index+1].forEach(function(i) {
+        if (i >= 0 && i < slides.length) {
+          var src = slides.eq(i).attr('src');
+          var img = new Image();
+          img.src = src;
+        }
+      });
+    }
+
+    $carousel.on('slid.bs.carousel', function (e) {
+      var newIndex = $(e.relatedTarget).index();
+      preloadNeighbors(newIndex);
+    });
+
+    $('#grid').on('click', '.lightbox-link', function (e) {
+      e.preventDefault();
+      var visibleItems = $('#grid .grid-item').not('.d-none');
+      var clickedItem = $(this).closest('.grid-item');
+      var startIndex = visibleItems.index(clickedItem);
+      buildCarousel(startIndex);
+      $modal.modal('show');
+    });
+
+    $(document).on('keydown', function (e) {
+      if (!$modal.hasClass('show')) return;
+      if (e.key === 'ArrowLeft') { $carousel.carousel('prev'); }
+      if (e.key === 'ArrowRight') { $carousel.carousel('next'); }
+    });
+
+    // Apply filter function
+    function applyFilter(filter) {
+      $('#filters .nav-link').removeClass('active');
+      $('#filters .nav-link[data-filter="' + filter + '"]').addClass('active');
+
+      var $items = $('#grid .grid-item');
+      if (filter === 'all') {
+        $items.each(function () {
+          var $item = $(this);
+          if ($item.hasClass('d-none')) {
+            $item.removeClass('d-none').addClass('fade-out');
+            void $item[0].offsetWidth;
+            $item.removeClass('fade-out');
+          }
+        });
+        return;
+      }
+
+      $items.each(function () {
+        var $item = $(this);
+        var tag = String($item.data('tag') || '').toLowerCase();
+
+        if (tag === filter) {
+          if ($item.hasClass('d-none')) {
+            $item.removeClass('d-none').addClass('fade-out');
+            void $item[0].offsetWidth;
+            $item.removeClass('fade-out');
+          }
+        } else {
+          if (!$item.hasClass('d-none') && !$item.hasClass('fade-out')) {
+            $item.addClass('fade-out');
+            $item.one('transitionend', function () {
+              $item.addClass('d-none').removeClass('fade-out');
+            });
+          }
+        }
+      });
+    }
+
+    // Read filter from query param (for search → gallery)
+    var params = new URLSearchParams(window.location.search);
+    var filterParam = (params.get('filter') || 'all').toLowerCase();
+    applyFilter(filterParam);
+
+    // Filter buttons
+    $('#filters .nav-link').on('click', function (e) {
+      e.preventDefault();
+      var filter = String($(this).data('filter') || 'all').toLowerCase();
+      applyFilter(filter);
+
+      var url = new URL(window.location);
+      if (filter === 'all') {
+        url.searchParams.delete('filter');
+      } else {
+        url.searchParams.set('filter', filter);
+      }
+      window.history.replaceState({}, '', url);
+    });
+  });
+</script>
+{% endblock %}

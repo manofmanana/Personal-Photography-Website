@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}Contact — Alejandro Ines{% endblock %}
+{% block body %}
+<main class="contact-background d-flex flex-column contact-page">
+  <div class="container py-5">
+    <h1 class="page-title">Contact</h1>
+    <p class="contact-email mb-3">Email: <a href="mailto:alejandroinesp@gmail.com">alejandroinesp@gmail.com</a></p>
+
+    <div class="row">
+      <!-- Contact Form -->
+      <div class="col-md-7">
+        <p class="contact-text">This form sends via Formspree and also lets me respond quickly. Thanks for reaching out.</p>
+        <form id="contactForm" action="https://formspree.io/f/xnnbkzka" method="POST">
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label for="name">Name</label>
+              <input id="name" name="name" class="form-control" type="text" required>
+            </div>
+            <div class="form-group col-md-6">
+              <label for="email2">Email</label>
+              <input id="email2" name="email" class="form-control" type="email" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="msg">Message</label>
+            <textarea id="msg" name="message" class="form-control" rows="4" required></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Send</button>
+        </form>
+      </div>
+
+      <!-- Contact Photo -->
+      <div class="col-md-5 mt-4 mt-md-0 text-center">
+        <div class="contact-photo-wrap">
+          <img class="img-fluid contact-frame" src="{{ url_for('static', filename='photos/contact/DSC01840.jpeg') }}" alt="Contact photo">
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Styles -->
+<style>
+  .contact-background {
+    background: url("{{ url_for('static', filename='photos/hero/IMG_1329.jpeg') }}") no-repeat center center fixed;
+    background-size: cover;
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+  }
+  .contact-background::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: -1;
+  }
+
+  /* Force all text white */
+  .page-title,
+  .contact-text,
+  .contact-email,
+  .contact-email a,
+  label,
+  body,
+  p,
+  h1, h2, h3, h4, h5, h6 {
+    color: #fff !important;
+  }
+
+  /* Form controls */
+  .form-control {
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid #fff;
+    color: #fff;
+    transition: all 0.2s ease;
+  }
+  .form-control:focus {
+    background-color: rgba(255,255,255,0.15);
+    box-shadow: none;
+    color: #fff;
+  }
+
+  /* Contact photo frame */
+  .contact-photo-wrap {
+    display: inline-block;
+    padding: 6px;
+    background: #111;
+    border: 5px solid #5a3a33;
+    border-radius: 1rem;
+    transition: box-shadow 0.3s ease;
+  }
+  .contact-frame {
+    border-radius: 0.75rem;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  .contact-photo-wrap:hover { box-shadow: 0 0 25px rgba(90,58,51,0.75); }
+  .contact-frame:hover { transform: scale(1.03); }
+
+  /* Contact page navbar search input fix */
+  .contact-page #siteSearch {
+    background-color: rgba(255,255,255,0.15) !important; /* consistent translucent background */
+    color: #fff !important; /* text always white */
+    border: 1px solid #fff !important;
+  }
+  .contact-page #siteSearch::placeholder {
+    color: #fff !important;
+    opacity: 1 !important;
+  }
+</style>
+{% endblock %}
