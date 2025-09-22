@@ -260,8 +260,19 @@
     color: inherit !important;
   }
 
-  /* --- MOBILE OPTIMIZATION --- */
+  /* --- MOBILE OPTIMIZATION (hero fullscreen) --- */
   @media (max-width: 768px) {
+    .hero-wrap {
+      height: 100vh;
+      min-height: 100vh;
+    }
+    .hero-wrap .carousel-inner,
+    .hero-wrap .carousel-item,
+    .hero-wrap .hero-img {
+      height: 100%;
+      object-fit: cover;
+    }
+
     .copper-sphere {
       width: 260px;
       height: 260px;
@@ -291,6 +302,17 @@
   }
 
   @media (max-width: 480px) {
+    .hero-wrap {
+      height: 100vh;
+      min-height: 100vh;
+    }
+    .hero-wrap .carousel-inner,
+    .hero-wrap .carousel-item,
+    .hero-wrap .hero-img {
+      height: 100%;
+      object-fit: cover;
+    }
+
     .copper-sphere {
       width: 200px;
       height: 200px;
