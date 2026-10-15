@@ -1,182 +1,33 @@
 {% extends "base.html" %}
-{% block title %}Gallery — Alejandro Ines{% endblock %}
+{% from "_macros.html" import gallery_tile, lightbox %}
+{% block title %}Work — Alejandro Ines{% endblock %}
+{% block description %}The full photography portfolio of Alejandro Ines: nature, portraits, candids, and experiments.{% endblock %}
 {% block body %}
-<main class="gallery-background d-flex flex-column">
-  <div class="container py-5">
-    <h1 class="page-title mb-4">Gallery</h1>
+<div class="container">
+  <header class="page-head">
+    <span class="eyebrow">Portfolio</span>
+    <h1>The <em>work</em></h1>
+    <p>Places that stopped me in my tracks and people I love. Tap any photo to see it full screen.</p>
+  </header>
 
-    <!-- Filters -->
-    <ul class="nav nav-pills mb-4" id="filters">
-      <li class="nav-item"><a class="nav-link active" data-filter="all" href="#">All</a></li>
-      <li class="nav-item"><a class="nav-link" data-filter="nature" href="#">Nature</a></li>
-      <li class="nav-item"><a class="nav-link" data-filter="portraits" href="#">Portraits</a></li>
-      <li class="nav-item"><a class="nav-link" data-filter="candids" href="#">Candids</a></li>
-      <li class="nav-item"><a class="nav-link" data-filter="experimental" href="#">Experimental</a></li>
-    </ul>
-
-    <!-- Photo Grid -->
-    <div class="row" id="grid">
-      {% for photo in photos %}
-      <div
-        class="col-sm-6 col-md-4 mb-4 grid-item {{ photo['tag'] }}"
-        data-tag="{{ photo['tag']|lower }}"
-      >
-        <img
-          class="img-fluid rounded shadow-sm gallery-img lazy-img"
-          src="{{ photo['filename']|web_url }}"
-          alt="{{ photo['tag']|capitalize }} photograph by Alejandro Ines"
-          loading="lazy"
-          style="width:100%; aspect-ratio:1 / 1; object-fit:cover;"
-          tabindex="0">
-      </div>
-      {% else %}
-      <p class="text-muted col-12">No photos uploaded yet. Add some in the Admin panel.</p>
-      {% endfor %}
-    </div>
+  {% if photos %}
+  <div class="chips" role="group" aria-label="Filter by subject">
+    <button type="button" class="chip" data-filter="all" aria-pressed="true">All <small>{{ photos|length }}</small></button>
+    {% for tag in gallery_tags %}
+      {% set count = photos|selectattr('tag', 'equalto', tag)|list|length %}
+      {% if count %}
+    <button type="button" class="chip" data-filter="{{ tag }}" aria-pressed="false">{{ tag|capitalize }} <small>{{ count }}</small></button>
+      {% endif %}
+    {% endfor %}
   </div>
-</main>
 
-<!-- Custom styles -->
-<style>
-  .gallery-background {
-    background: url("{{ 'photos/hero/IMG_0601.jpeg'|web_url }}") no-repeat center center fixed;
-    background-size: cover;
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    width: 100%;
-  }
-  .gallery-background::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    z-index: -1;
-  }
+  <div class="justified" data-gallery>
+    {% for p in photos %}{{ gallery_tile(p) }}{% endfor %}
+  </div>
+  {% else %}
+  <p class="empty">No photos yet. Add some from the admin panel.</p>
+  {% endif %}
+</div>
 
-  .nav-pills .nav-link {
-    border-radius: 0.5rem;
-    transition: all 0.3s ease;
-  }
-  .nav-pills .nav-link.active {
-    background-color: #1546A0;
-    color: #fff !important;
-  }
-
-  /* Grid + copper frames */
-  #grid { overflow: visible; }
-  #grid .grid-item { position: relative; overflow: visible; }
-  #grid .gallery-img {
-    border: 4px solid #b87333; /* copper */
-    transition:
-      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-      box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-      border-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    opacity: 0;                /* lazy fade-in */
-    transform-origin: center center;
-    will-change: transform, box-shadow, border-color, opacity;
-  }
-  #grid .gallery-img.loaded { opacity: 1; }
-
-  /* Hover showcase */
-  #grid .gallery-img:hover,
-  #grid .gallery-img:focus,
-  #grid .gallery-img.expanded {
-    transform: scale(1.75);
-    box-shadow: 0 25px 70px rgba(75,46,46,0.65);
-    border-color: #4b2e2e; /* dark brown */
-    opacity: 1;
-    z-index: 10;
-    position: relative;
-  }
-
-  .row { overflow: visible; }
-
-  /* Theme-aware page title & filters */
-  .theme-dark .page-title,
-  .theme-dark #filters .nav-link { color: #fff; }
-  .theme-light .page-title,
-  .theme-light #filters .nav-link { color: #111; }
-
-  /* Reduce hover effect on touch devices */
-  @media (hover: none) {
-    #grid .gallery-img:hover,
-    #grid .gallery-img:focus { transform: none; box-shadow: none; border-color: #b87333; }
-    #grid .gallery-img.expanded {
-      transform: scale(1.6);
-      box-shadow: 0 20px 60px rgba(75,46,46,0.55);
-      border-color: #4b2e2e;
-    }
-  }
-</style>
-
-<!-- Filtering + lazy fade-in + tap-to-expand (touch only) -->
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    // Lazy load fade-in
-    $('#grid img.lazy-img').each(function () {
-      var $img = $(this);
-      if (this.complete) {
-        $img.addClass('loaded');
-      } else {
-        $img.on('load', function () { $img.addClass('loaded'); });
-      }
-    });
-
-    // Simplified filter function (hides non-matching items)
-    function applyFilter(filter) {
-      $('#filters .nav-link').removeClass('active');
-      $('#filters .nav-link[data-filter="' + filter + '"]').addClass('active');
-
-      var $items = $('#grid .grid-item');
-      if (filter === 'all') {
-        $items.removeClass('d-none');
-      } else {
-        $items.each(function () {
-          var $item = $(this);
-          var tag = String($item.data('tag') || '').toLowerCase();
-          $item.toggleClass('d-none', tag !== filter);
-        });
-      }
-    }
-
-    // Init from query param
-    var params = new URLSearchParams(window.location.search);
-    var filterParam = (params.get('filter') || 'all').toLowerCase();
-    applyFilter(filterParam);
-
-    // Filter buttons
-    $('#filters .nav-link').on('click', function (e) {
-      e.preventDefault();
-      var filter = String($(this).data('filter') || 'all').toLowerCase();
-      applyFilter(filter);
-
-      // Update URL (no reload)
-      var url = new URL(window.location);
-      if (filter === 'all') { url.searchParams.delete('filter'); }
-      else { url.searchParams.set('filter', filter); }
-      window.history.replaceState({}, '', url);
-    });
-
-    // --- Tap-to-expand only on touch devices ---
-    const isTouch = window.matchMedia('(hover: none)').matches;
-
-    if (isTouch) {
-      $('#grid').on('click', '.gallery-img', function () {
-        var $img = $(this);
-        var isExpanded = $img.hasClass('expanded');
-        $('#grid .gallery-img.expanded').removeClass('expanded');
-        if (!isExpanded) $img.addClass('expanded');
-      });
-
-      // ESC closes any expanded image
-      $(document).on('keydown', function (e) {
-        if (e.key === 'Escape') {
-          $('#grid .gallery-img.expanded').removeClass('expanded');
-        }
-      });
-    }
-  });
-</script>
+{{ lightbox() }}
 {% endblock %}

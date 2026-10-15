@@ -6,7 +6,8 @@ import re
 import secrets
 import sqlite3
 import uuid
-from functools import wraps
+from datetime import datetime
+from functools import lru_cache, wraps
 
 from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
 from flask_wtf.csrf import CSRFProtect, CSRFError
@@ -43,9 +44,47 @@ ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "webp"}
 POST_KINDS = ("Journal", "Note", "Essay")
 GALLERY_TAGS = ("nature", "portraits", "candids", "experimental")
 
-# Web-sized copies of photos live under static/web/, mirroring the original path.
-WEB_IMAGE_DIR = "web"
-WEB_IMAGE_MAX_SIZE = 2000  # longest edge, in pixels
+# Web-sized copies of photos, mirroring the original path under each folder:
+# "large" for full-screen viewing, "small" for grids and cards.
+IMAGE_SIZES = {
+    "large": ("web", 2000),    # (folder under static/, longest edge in px)
+    "small": ("web-sm", 900),
+}
+
+CONTACT_EMAIL = "alejandroinesp@gmail.com"
+FORMSPREE_URL = "https://formspree.io/f/xnnbkzka"
+
+# Gallery photo ids shown under "Selected work" on the homepage, in order.
+SELECTED_WORK_IDS = [49, 24, 28, 54, 26, 45, 19, 35, 56]
+
+# Services offered on /services and the homepage. Set "price" to a string
+# such as "From $150" to show it; None shows "Pricing on request".
+SERVICES = [
+    {
+        "slug": "portraits",
+        "title": "Portraits",
+        "blurb": "Natural-light portraits on location, for you, your partner, or your whole crew.",
+        "includes": ["Solo, couples, or family", "Shot on location", "Edited, high-resolution images"],
+        "photo_id": 24,
+        "price": None,
+    },
+    {
+        "slug": "graduation",
+        "title": "Graduation",
+        "blurb": "Celebrate the milestone with photos you'll actually want to frame.",
+        "includes": ["Campus or a spot that means something", "Cap, gown, and stole details", "Edited, high-resolution images"],
+        "photo_id": 19,
+        "price": None,
+    },
+    {
+        "slug": "events",
+        "title": "Events & Candids",
+        "blurb": "Performances, gatherings, and community moments, captured as they happen.",
+        "includes": ["Parties, shows, and community events", "Candid, documentary style", "Edited, high-resolution images"],
+        "photo_id": 28,
+        "price": None,
+    },
+]
 
 
 def allowed_file(filename):
@@ -57,40 +96,61 @@ def save_upload(file, folder):
     unique_name = f"{uuid.uuid4().hex}_{secure_filename(file.filename)}"
     file.save(os.path.join(app.static_folder, folder, unique_name))
     rel_path = f"{folder}/{unique_name}"
-    make_web_image(rel_path)
+    make_web_images(rel_path)
     return rel_path
 # --------------------------------
 
 # -------- Web-sized images --------
-def web_image_path(rel_path):
-    """static-relative path of the web-sized copy, e.g. web/photos/hero/IMG_1.webp"""
-    return f"{WEB_IMAGE_DIR}/{os.path.splitext(rel_path)[0]}.webp"
+def web_image_path(rel_path, size="large"):
+    """static-relative path of a web-sized copy, e.g. web/photos/hero/IMG_1.webp"""
+    folder = IMAGE_SIZES[size][0]
+    return f"{folder}/{os.path.splitext(rel_path.removeprefix('/static/'))[0]}.webp"
 
 
-def make_web_image(rel_path):
-    """Write a resized WebP copy of a static image. EXIF (including GPS) is dropped."""
+def make_web_images(rel_path):
+    """Write resized WebP copies of a static image. EXIF (including GPS) is dropped."""
     src = os.path.join(app.static_folder, rel_path)
-    dest = os.path.join(app.static_folder, web_image_path(rel_path))
-    if os.path.exists(dest) or not os.path.exists(src):
+    if not os.path.exists(src):
         return
-    os.makedirs(os.path.dirname(dest), exist_ok=True)
-    with Image.open(src) as img:
-        img = ImageOps.exif_transpose(img)  # phone photos store rotation in EXIF
-        img.thumbnail((WEB_IMAGE_MAX_SIZE, WEB_IMAGE_MAX_SIZE))
-        img.save(dest, "WEBP", quality=82, method=6)
+    for size, (_, max_edge) in IMAGE_SIZES.items():
+        dest = os.path.join(app.static_folder, web_image_path(rel_path, size))
+        if os.path.exists(dest):
+            continue
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        with Image.open(src) as img:
+            img = ImageOps.exif_transpose(img)  # phone photos store rotation in EXIF
+            img.thumbnail((max_edge, max_edge))
+            img.save(dest, "WEBP", quality=82, method=6)
 
 
 @app.template_filter("web_url")
-def web_url(path):
+def web_url(path, size="large"):
     """URL for a photo, preferring its web-sized copy when one exists.
 
     Accepts a static-relative path ("photos/x.jpeg") or a URL ("/static/uploads/x.jpeg").
     """
     rel_path = path.removeprefix("/static/")
-    web_path = web_image_path(rel_path)
+    web_path = web_image_path(rel_path, size)
     if os.path.exists(os.path.join(app.static_folder, web_path)):
         return url_for("static", filename=web_path)
     return url_for("static", filename=rel_path)
+
+
+@lru_cache(maxsize=1024)
+def _image_dims(file_path, mtime):
+    with Image.open(file_path) as img:
+        return img.size
+
+
+@app.template_filter("image_dims")
+def image_dims(path):
+    """(width, height) of a photo's small copy, so pages can reserve space before it loads."""
+    rel_path = path.removeprefix("/static/")
+    for candidate in (web_image_path(rel_path, "small"), rel_path):
+        file_path = os.path.join(app.static_folder, candidate)
+        if os.path.exists(file_path):
+            return _image_dims(file_path, os.path.getmtime(file_path))
+    return (3, 2)
 
 
 @app.template_filter("highlight")
@@ -104,9 +164,9 @@ def highlight(text, query):
 
 
 def delete_static_file(url):
-    """Remove an uploaded image and its web-sized copy. Missing files are ignored."""
+    """Remove an uploaded image and its web-sized copies. Missing files are ignored."""
     rel_path = url.removeprefix("/static/")
-    for path in (rel_path, web_image_path(rel_path)):
+    for path in (rel_path, *(web_image_path(rel_path, size) for size in IMAGE_SIZES)):
         try:
             os.remove(os.path.join(app.static_folder, path))
         except OSError:
@@ -125,7 +185,7 @@ def make_web_images_command():
             paths += re.findall(r"photos/[^'\")\s]+\.(?:jpe?g|png|webp)", f.read())
 
     for path in sorted(set(p.removeprefix("/static/") for p in paths)):
-        make_web_image(path)
+        make_web_images(path)
     print(f"Checked {len(set(paths))} images.")
 # --------------------------------
 
@@ -156,7 +216,23 @@ def admin_required(view):
 
 @app.context_processor
 def inject_globals():
-    return dict(site_title="Alejandro Ines")
+    return dict(
+        site_title="Alejandro Ines",
+        contact_email=CONTACT_EMAIL,
+        formspree_url=FORMSPREE_URL,
+        current_year=datetime.now().year,
+        gallery_tags=GALLERY_TAGS,
+    )
+
+
+@app.template_filter("pretty_date")
+def pretty_date(value):
+    """'2025-09-21 20:03:21' -> 'September 21, 2025'"""
+    try:
+        d = datetime.strptime(str(value)[:10], "%Y-%m-%d")
+    except ValueError:
+        return value
+    return f"{d:%B} {d.day}, {d.year}"
 
 
 @app.errorhandler(CSRFError)
@@ -165,9 +241,51 @@ def handle_csrf_error(e):
     return redirect(request.referrer or url_for("index"))
 
 
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("404.html"), 404
+
+
+def services_with_photos(db):
+    """SERVICES, each with the filename of its example photo attached."""
+    ids = [s["photo_id"] for s in SERVICES]
+    rows = db.execute(
+        f"SELECT id, filename FROM gallery WHERE id IN ({','.join('?' * len(ids))})", ids
+    ).fetchall()
+    filenames = {r["id"]: r["filename"] for r in rows}
+    return [dict(s, photo=filenames.get(s["photo_id"])) for s in SERVICES]
+
+
 @app.route("/")
 def index():
-    return render_template("index.html")
+    with get_db() as db:
+        photos = db.execute(
+            "SELECT id, filename, tag, created FROM gallery ORDER BY created DESC"
+        ).fetchall()
+        posts = db.execute(
+            "SELECT id, title, kind, body, created, image_url FROM posts ORDER BY created DESC LIMIT 3"
+        ).fetchall()
+        services = services_with_photos(db)
+
+    by_id = {p["id"]: p for p in photos}
+    selected = [by_id[i] for i in SELECTED_WORK_IDS if i in by_id] or photos[:9]
+
+    # One cover photo and a count per tag; covers come from Selected Work when possible
+    categories = []
+    for tag in GALLERY_TAGS:
+        tagged = [p for p in photos if p["tag"] == tag]
+        if tagged:
+            cover = next((p for p in selected if p["tag"] == tag), tagged[0])
+            categories.append({"tag": tag, "count": len(tagged), "cover": cover})
+
+    return render_template("index.html", selected=selected, categories=categories,
+                           posts=posts, services=services)
+
+
+@app.route("/services")
+def services():
+    with get_db() as db:
+        return render_template("services.html", services=services_with_photos(db))
 
 
 @app.route("/gallery")

@@ -1,89 +1,32 @@
 {% extends "base.html" %}
+{% from "_macros.html" import photo %}
 {% block title %}{{ post.title }} — Alejandro Ines{% endblock %}
+{% block description %}{{ post.body|truncate(150) }}{% endblock %}
+{% block og_image %}{{ post.image_url|web_url if post.image_url else ('photos/hero/IMG_0601.jpeg'|web_url) }}{% endblock %}
 {% block body %}
-<main class="post-background d-flex flex-column">
-  <div class="container py-5">
-    <article class="post mb-5 pb-4">
-      <h1 class="post-title">{{ post.title }}</h1>
-      <p class="post-meta">{{ post.kind }} • {{ post.created }}</p>
+<article>
+  <header class="article-head container container-narrow">
+    <div class="post-meta">{{ post.kind }}<span class="dot">·</span>{{ post.created|pretty_date }}</div>
+    <h1>{{ post.title }}</h1>
+  </header>
 
-      {% if post.image_url %}
-      <div class="post-image-wrapper mb-3">
-        <img class="post-image" src="{{ post.image_url|web_url }}" alt="{{ post.title }}">
-      </div>
-      {% endif %}
-
-      <div class="post-body">
-        {% for para in post.body.split("\n\n") %}
-          <p>{{ para }}</p>
-        {% endfor %}
-      </div>
-    </article>
+  {% if post.image_url %}
+  <div class="container">
+    <figure class="article-cover">{{ photo(post.image_url, post.title, size='large', lazy=False) }}</figure>
   </div>
-</main>
+  {% endif %}
 
-<style>
-  .post-background {
-    background: url("{{ 'photos/hero/IMG_3386.jpeg'|web_url }}") no-repeat center center fixed;
-    background-size: cover;
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    width: 100%;
-  }
+  <div class="container container-narrow">
+    <div class="prose">
+      {% for para in post.body.split("\n\n") %}
+      <p>{{ para }}</p>
+      {% endfor %}
+    </div>
 
-  .post-background::before {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.55);
-    z-index: -1;
-  }
-
-  .post {
-    position: relative;
-    z-index: 2;
-    background-color: rgba(128,128,128,0.9);
-    padding: 20px;
-    border-radius: 8px;
-    border: 4px solid #b87333; /* copper frame */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-  }
-
-  .post-title,
-  .post-meta,
-  .post-body {
-    color: #fff !important;
-  }
-
-  .post-image-wrapper {
-    display: flex;
-    justify-content: center;
-  }
-
-  .post-image {
-    max-width: 60%;
-    border: 10px solid #4a2f2a;
-    border-radius: 12px;
-    box-shadow: 0 0 0 6px #5a3a33, 0 4px 6px rgba(0,0,0,0.6);
-    animation: pulse 10s ease-in-out infinite;
-    transition: transform 0.6s ease, box-shadow 0.6s ease;
-  }
-
-  .post-image:hover {
-    transform: scale(1.05) rotate(-1.5deg);
-    box-shadow: 0 0 20px rgba(184,115,51,0.8), 0 6px 15px rgba(0,0,0,0.6);
-  }
-
-  @keyframes pulse {
-    0%, 100% {
-      transform: scale(1);
-      box-shadow: 0 0 0 6px #5a3a33, 0 4px 6px rgba(0,0,0,0.6);
-    }
-    50% {
-      transform: scale(1.02);
-      box-shadow: 0 0 0 6px #5a3a33, 0 6px 10px rgba(0,0,0,0.65);
-    }
-  }
-</style>
+    <div class="article-foot">
+      <a class="link-arrow" href="{{ url_for('blog') }}"><span>←</span> All entries</a>
+      <a class="link-arrow" href="{{ url_for('contact') }}">Book a shoot <span>→</span></a>
+    </div>
+  </div>
+</article>
 {% endblock %}

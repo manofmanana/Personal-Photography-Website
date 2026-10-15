@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% from "_macros.html" import photo %}
+{% block title %}Services — Alejandro Ines{% endblock %}
+{% block description %}Book Alejandro Ines for portraits, graduation photos, and events.{% endblock %}
+{% block body %}
+<div class="container">
+  <header class="page-head">
+    <span class="eyebrow">Services</span>
+    <h1>Let's make <em>something</em></h1>
+    <p>I shoot the way I shoot for myself: natural light, real moments, and photos you'll want to keep. Here's what I offer.</p>
+  </header>
+
+  <div class="services">
+    {% for s in services %}
+    <article class="service-card" id="{{ s.slug }}">
+      <div class="media">{% if s.photo %}{{ photo(s.photo, s.title ~ ' photography example', lazy=not loop.first) }}{% endif %}</div>
+      <h3>{{ s.title }}</h3>
+      <p>{{ s.blurb }}</p>
+      <ul>
+        {% for item in s.includes %}<li>{{ item }}</li>{% endfor %}
+      </ul>
+      <div class="service-price">
+        <strong>{{ s.price or 'Pricing on request' }}</strong>
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('contact', type=s.slug) }}">Inquire</a>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">How it works</span>
+        <h2>Simple from <em>start to finish</em></h2>
+      </div>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <h3>Reach out</h3>
+        <p>Tell me what you have in mind, when, and where. I'll reply with availability and pricing.</p>
+      </div>
+      <div class="step">
+        <h3>We shoot</h3>
+        <p>We pick a place and a time with good light, then keep it relaxed. No stiff poses required.</p>
+      </div>
+      <div class="step">
+        <h3>Your photos</h3>
+        <p>I edit the best of the shoot and send you high-resolution images to keep, print, and share.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="cta reveal">
+      <img class="fade-img" src="{{ 'photos/hero/IMG_0601.jpeg'|web_url }}" alt="" loading="lazy">
+      <div class="cta-content">
+        <h2>Ready when you are.</h2>
+        <p>Have a date in mind, or just an idea? Either way, send it over.</p>
+        <a class="btn btn-primary" href="{{ url_for('contact') }}">Book a shoot</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

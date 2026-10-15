@@ -30,7 +30,7 @@ def count_subscribers():
         return db.execute("SELECT count(*) FROM subscribers").fetchone()[0]
 
 
-@pytest.mark.parametrize("path", ["/", "/gallery", "/blog", "/about", "/contact", "/search", "/search?q=photo"])
+@pytest.mark.parametrize("path", ["/", "/gallery", "/services", "/blog", "/about", "/contact", "/contact?type=graduation", "/search", "/search?q=photo", "/search?q=zzzz-no-match", "/post/6"])
 def test_public_pages_load(client, path):
     assert client.get(path).status_code == 200
 
@@ -93,4 +93,22 @@ def test_search_highlight_escapes_html():
 def test_web_url_prefers_web_copy_and_falls_back_to_original():
     with site.app.test_request_context():
         assert site.web_url("photos/hero/IMG_3386.jpeg") == "/static/web/photos/hero/IMG_3386.webp"
+        assert site.web_url("photos/hero/IMG_3386.jpeg", "small") == "/static/web-sm/photos/hero/IMG_3386.webp"
         assert site.web_url("/static/does-not-exist.jpeg") == "/static/does-not-exist.jpeg"
+
+
+def test_unknown_page_returns_404(client):
+    response = client.get("/no-such-page")
+    assert response.status_code == 404
+    assert b"didn't make the final cut" in response.data
+
+
+def test_homepage_shows_selected_work_and_services(client):
+    html = client.get("/").get_data(as_text=True)
+    assert html.count('class="tile"') == len(site.SELECTED_WORK_IDS)
+    for service in site.SERVICES:
+        assert service["title"].replace("&", "&amp;") in html
+
+
+def test_pretty_date():
+    assert site.pretty_date("2025-09-21 20:03:21") == "September 21, 2025"

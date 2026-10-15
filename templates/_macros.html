@@ -1,0 +1,37 @@
+{# A responsive photo: small copy by default, real dimensions so the layout doesn't jump. #}
+{% macro photo(path, alt, size='small', lazy=True, class='') -%}
+  {%- set w, h = path|image_dims -%}
+  <img class="fade-img {{ class }}" src="{{ path|web_url(size) }}" alt="{{ alt }}" width="{{ w }}" height="{{ h }}"
+       {% if lazy %}loading="lazy"{% endif %} decoding="async">
+{%- endmacro %}
+
+{% macro gallery_tile(p) -%}
+  {%- set w, h = p['filename']|image_dims -%}
+  <button type="button" class="tile" style="--r: {{ (w / h)|round(3) }}" data-tag="{{ p['tag'] }}" data-full="{{ p['filename']|web_url('large') }}"
+          aria-label="View {{ p['tag'] }} photo full screen">
+    {{ photo(p['filename'], p['tag']|capitalize ~ ' photograph by Alejandro Ines') }}
+    <span class="tile-label">{{ p['tag'] }}</span>
+  </button>
+{%- endmacro %}
+
+{# Full-screen viewer used by any page with a [data-gallery] grid #}
+{% macro lightbox() -%}
+<dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
+  <div class="lightbox-bar">
+    <span data-counter></span>
+    <button type="button" class="icon-btn" data-close aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div class="lightbox-stage">
+    <img alt="">
+    <button type="button" class="icon-btn lightbox-nav lightbox-prev" data-prev aria-label="Previous photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m15 5-7 7 7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button type="button" class="icon-btn lightbox-nav lightbox-next" data-next aria-label="Next photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m9 5 7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="lightbox-caption" data-caption></div>
+</dialog>
+{%- endmacro %}
