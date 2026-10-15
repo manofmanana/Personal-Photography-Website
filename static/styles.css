@@ -262,3 +262,83 @@ html.theme-light .fade-transition {
 @media (max-width: 576px) {
   .card-deck .card { margin-bottom: 1rem; }
 }
+
+/* ===========================
+   NAVBAR TOOLS
+   =========================== */
+
+/* Always black text + placeholder for search input */
+#siteSearch,
+#siteSearch::placeholder {
+  color: #000 !important;
+  opacity: 1;
+}
+
+/* Mobile menu button: Bootstrap's 50%-white icon disappears on the light end of the gradient */
+.navbar-dark .navbar-toggler {
+  border-color: rgba(255,255,255,.8);
+  background-color: rgba(11,18,32,.35);
+}
+.navbar-dark .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='%23fff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+html.theme-light .navbar-toggler {
+  border-color: rgba(11,18,32,.6);
+  background-color: transparent;
+}
+html.theme-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3e%3cpath stroke='%230b1220' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Copper theme button */
+.btn-copper {
+  background-color: #b87333;
+  border: 2px solid #b87333;
+  color: #fff !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.btn-copper:hover {
+  background-color: #d68642;
+  border-color: #d68642;
+  color: #fff !important;
+  box-shadow: 0 0 10px rgba(184,115,51,0.5);
+}
+
+/* Mobile adjustments only */
+@media (max-width: 767.98px) {
+  .navbar-tools {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .navbar-tools form {
+    flex-direction: column;
+    width: 100%;
+  }
+  .navbar-tools input,
+  .navbar-tools button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  .navbar-tools #toggleTheme {
+    margin-top: 0;
+  }
+}
+
+/* Smooth fade-in for images (scripts.js adds .loaded) */
+img {
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+}
+img.loaded {
+  opacity: 1;
+}
+
+/* ===========================
+   ADMIN
+   =========================== */
+.admin-accent { color: #4a90e2 !important; }
+.admin-thumb { width: 60px; height: 60px; object-fit: cover; }
+.admin-scroll { max-height: 260px; overflow: auto; }
+.admin-login-container { max-width: 680px; }

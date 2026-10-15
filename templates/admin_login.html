@@ -2,11 +2,11 @@
 {% block title %}Admin Login — Alejandro Ines{% endblock %}
 {% block body %}
 <main class="admin-background d-flex flex-column">
-  <div class="container py-5" style="max-width:680px;">
+  <div class="container py-5 admin-login-container">
     <!-- Inline style guarantees white regardless of global styles -->
-    <h1 class="page-title" style="color:#fff !important;">Admin Login</h1>
+    <h1 class="page-title text-white">Admin Login</h1>
     <form method="POST" action="{{ url_for('admin_login') }}">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="form-group">
         <label for="password" class="form-label theme-label">Password</label>
         <input id="password" name="password" type="password" class="form-control" required>
