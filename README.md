@@ -1,207 +1,112 @@
 # Alejandro Ines — Photography Portfolio
 
-#### Video Demo: https://youtu.be/QMTZ2I8o7cI
-### Live Deployment (via Render): https://aiphotographywebsiteblog.onrender.com/
-#### GitHub Repo:https://github.com/YOURUSERNAME/YOURPROJECT.git
+[![Tests](https://github.com/manofmanana/Personal-Photography-Website/actions/workflows/tests.yml/badge.svg)](https://github.com/manofmanana/Personal-Photography-Website/actions/workflows/tests.yml)
 
----
+A full-stack photography portfolio and blog, built with Flask and SQLite as my **CS50x final project**. It showcases photos I've taken in recent years of beautiful places and the people I love (sometimes both at once).
 
-## Description
+**Live site:** https://aiphotographywebsiteblog.onrender.com/ (hosted on Render's free tier, so the first visit after a quiet spell can take up to a minute to wake up)
+**Video demo:** https://youtu.be/QMTZ2I8o7cI
 
-This project is my **CS50x Final Project**, a full-stack photography portfolio and blog web application. It is built with **Flask**, **SQLite**, **HTML/CSS (Bootstrap 4)**, and **JavaScript**.
-
-The goal was to create a platform that looks like a personal online gallery: something that reflects both my photography style and my technical learning from CS50. I wanted it to feel modern and “artistic,” so I chose a **copper + navy blue color scheme**, subtle animations, and layout choices that emphasize photos.
-
-The site has the following key sections: a **Homepage with a copper sphere ripple animation and quote box**, a **Gallery** with filters and a lightbox slider, a **Blog** with posts, an **About** page, a **Contact** form, a global **Search** feature, and an **Admin Panel** where I can manage content.
-
-All blog posts, gallery images, subscribers, and messages are stored in a **SQLite database**. Uploaded photos are stored in `static/gallery_uploads/` and referenced from the database.
+![Homepage with the copper sphere over a coastal hero photo](docs/screenshot-home.jpg)
+![Gallery with tag filters and copper-framed photos](docs/screenshot-gallery.jpg)
 
 ---
 
 ## Features
 
-- **Homepage (Hero + Sphere Animation)**
-  - Bootstrap carousel hero with photos.
-  - A **copper 3D sphere** animation with ripple effects.
-  - Dynamic “Food for Thought” quotes that update.
-  - A copper divider line with shimmer effect.
-  - Fully mobile-optimized (sphere shrinks and repositions on phones).
+- **Homepage**: a full-screen photo carousel behind a glowing copper sphere, rotating "Food for Thought" quotes, featured work, and a newsletter sign-up.
+- **Gallery**: photos tagged *Nature*, *Portraits*, *Candids*, or *Experimental*, with instant client-side filtering (shareable via `?filter=nature`), lazy loading, and hover / tap-to-expand.
+- **Blog ("Shutter Speed Soapbox")**: Journal, Note, and Essay posts with an optional photo and a page per post.
+- **Search**: finds blog posts by title or text and gallery photos by tag, with matches highlighted.
+- **About** and **Contact** pages (the contact form is handled by [Formspree](https://formspree.io)).
+- **Light and dark themes** that follow your system setting and remember your choice.
+- **Admin panel** (password-protected): publish and delete posts, bulk-upload photos with a tag, retag or delete photos, and export subscribers to CSV.
 
-- **Gallery**
-  - Visitors can browse photos organized into four tags: *Nature, Portraits, Candids, Experimental*.
-  - **Filter controls** update the grid instantly with smooth fade transitions.
-  - **Lightbox modal with carousel**: clicking any thumbnail opens a modal with next/previous controls, built directly from the thumbnails so the images always load.
-  - Thumbnails have **lazy loading** and copper borders.
-  - Admins can upload/edit/delete photos, and retag them if needed.
+## How it works
 
-- **Blog (“Shutter Speed Soapbox”)**
-  - Posts have title, kind (Journal, Note, Essay), body, and optional image.
-  - List view shows posts chronologically.
-  - Dedicated post detail page for each entry.
-  - Text is styled for readability in dark mode.
+| Piece | Choice | Why |
+|---|---|---|
+| Backend | Flask | Small, readable, and what CS50 taught |
+| Database | SQLite (`database.db`) | One file, no server to run, plenty for one author |
+| Frontend | Jinja templates, Bootstrap 4, a little jQuery | Responsive grid without hand-writing one |
+| Images | Pillow | Makes web-sized WebP copies of every photo |
+| Hosting | Render + Gunicorn | Free tier with auto-deploy from GitHub |
 
-- **Search**
-  - Navbar search bar works across the site.
-  - Can find both blog posts and gallery photos.
-  - Results page shows excerpts and links to details.
+**Web-sized photos.** Camera originals are 2–4 MB each, far too heavy for a grid of 55 photos. The app keeps each original but also writes a WebP copy (max 2000px, EXIF and GPS data removed) under `static/web/`, and templates use the `web_url` filter to serve it. Photos uploaded through the admin panel get their copy automatically; for existing photos, run:
 
-- **About**
-  - Bio section in a copper-framed box.
-  - Notes about photography equipment.
-  - Consistent theme styling.
+```bash
+flask --app app make-web-images
+```
 
-- **Contact**
-  - Contact form (via **Formspree**) with fields for name, email, and message.
-  - Decorative framed contact photo.
-  - Styled to match the rest of the site.
+This cut the gallery from about 53 MB to 16 MB.
 
-- **Admin Panel**
-  - Login-protected (simple session-based auth).
-  - Create, update, and delete blog posts.
-  - Upload multiple photos at once to the gallery with a chosen tag.
-  - Retag or delete photos after upload.
-  - View and export subscribers to CSV.
-  - View messages submitted via the contact form.
+**Security.** The admin password and session key come from environment variables, the password is compared in constant time, every form that posts to the app carries a CSRF token, search terms are escaped before they're highlighted, and SQL queries are parameterized.
 
----
+**A note on uploads.** Render's free tier wipes its disk on every deploy, so photos uploaded through the live admin panel won't survive a redeploy. Photos are committed to this repo instead. Moving uploads to cloud storage is on the list below.
 
-## Technical Details
+## Project structure
 
-- **Backend Framework:** Flask (Python)
-- **Database:** SQLite, with 4 main tables (`posts`, `gallery`, `subscribers`, `messages`)
-- **Frontend:** HTML (Jinja templates), Bootstrap 4, custom CSS
-- **JavaScript:** Vanilla JS + jQuery for Bootstrap modal/carousel events
-- **Deployment:** Configured with `requirements.txt`, `Procfile`, `.gitignore`, and environment variables. Deployed to **Render**.
-
----
-
-## Database Schema
-
-```sql
-CREATE TABLE IF NOT EXISTS posts (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  title TEXT NOT NULL,
-  kind TEXT NOT NULL DEFAULT 'Journal' CHECK (kind IN ('Journal','Note','Essay')),
-  body TEXT NOT NULL,
-  image_url TEXT,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS subscribers (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT NOT NULL UNIQUE,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS messages (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  message TEXT NOT NULL,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS gallery (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  filename TEXT NOT NULL, -- relative path to file in static/gallery_uploads/
-  tag TEXT NOT NULL CHECK (tag IN ('nature','portraits','candids','experimental')),
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
----
-
-## File Structure
-├── app.py                 # Main Flask application with routes, DB queries, admin auth
-├── templates/             # Jinja2 templates
-│   ├── base.html          # Layout shell (navbar, footer)
-│   ├── index.html         # Homepage with hero + sphere animation
-│   ├── gallery.html       # Gallery grid, filters, lightbox modal
-│   ├── blog.html          # Blog index page
-│   ├── post_detail.html   # Blog post detail page
-│   ├── about.html         # About page
-│   ├── contact.html       # Contact page
-│   └── admin.html         # Admin dashboard
+```
+├── app.py               # Routes, database helpers, admin auth, image resizing
+├── schema.sql           # Tables: posts, subscribers, gallery
+├── database.db          # SQLite database (posts and gallery metadata)
+├── templates/           # Jinja templates; base.html is the shared layout
 ├── static/
-│   ├── styles.css         # Custom CSS (copper theme, responsive tweaks, animations)
-│   ├── scripts.js         # JavaScript (theme toggles, animations, filtering)
-│   ├── gallery_uploads/   # Uploaded gallery photos
-│   └── uploads/           # Uploaded blog post images
-├── requirements.txt       # Python dependencies
-├── Procfile               # Deployment entrypoint for Gunicorn
-└── README.md              # Project documentation (this file)
+│   ├── styles.css       # Copper + navy theme, light/dark modes
+│   ├── scripts.js       # Theme toggle, quotes, image fade-in
+│   ├── photos/          # Photos used by the page layouts
+│   ├── gallery_uploads/ # Gallery photos (originals)
+│   ├── uploads/         # Blog post photos (originals)
+│   └── web/             # Generated web-sized copies of the above
+├── tests/               # pytest suite
+├── requirements.txt
+└── Procfile             # gunicorn app:app
+```
 
----
+## Running locally
 
-## Design Choices
-SQLite over MySQL/Postgres: lightweight and portable for a personal project.
+```bash
+git clone https://github.com/manofmanana/Personal-Photography-Website.git
+cd Personal-Photography-Website
 
-Bootstrap grid system: ensures responsive design without writing custom grid CSS.
-
-Copper/Navy theme: unique and visually striking for a photography portfolio.
-
-Client-side filtering: fast, instant photo filtering without extra queries.
-
-Lightbox built directly from gallery grid: avoids mismatches and missing photos.
-
-Session-based admin auth: minimal but secure enough for single-user admin control.
-
----
-How to Run Locally:
-1. Clone the repo
-git clone https://github.com/YOURUSERNAME/YOURPROJECT.git
-cd YOURPROJECT
-
-2. Create and activate virtual environment:
-python3 -m venv venv
-source venv/bin/activate      # macOS/Linux
-# .\venv\Scripts\activate     # Windows
-
-3. Install dependencies:
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
-4. Run the app:
-flask run
+export ADMIN_PASSWORD=choose-one  # Windows PowerShell: $env:ADMIN_PASSWORD="choose-one"
+export SECRET_KEY=any-long-random-string
+flask --app app run --debug
+```
 
-Then visit: http://localhost:5000
+Then open http://localhost:5000 (admin panel at `/admin/login`).
 
----
+## Tests
 
-Deployment
+```bash
+pip install pytest
+pytest
+```
 
-This project is deployed on Render with GitHub auto-deploy enabled.
+The tests run against a temporary copy of the database, so they never change `database.db`. They also run automatically on GitHub Actions for every push and pull request.
 
-pip install -r requirements.txt
+## Deployment
 
-gunicorn app:app
+Render runs `pip install -r requirements.txt` and starts the app with `gunicorn app:app`. Set two environment variables in the Render dashboard:
 
+- `ADMIN_PASSWORD`: the admin panel password
+- `SECRET_KEY`: a long random string (for example, the output of `python -c "import secrets; print(secrets.token_hex(32))"`)
 
+## Future improvements
 
----
-
-## Future Improvements
-Future Improvements
-
-Add pagination for gallery and blog pages.
-
-Implement user accounts and commenting.
-
-Store uploads in cloud storage (e.g., S3, Cloudinary).
-
-Improve SEO with meta tags and Open Graph data.
-
-Enhance admin authentication with password hashing and role support.
-
----
+- Move uploads to cloud storage (e.g. Cloudinary or S3) so they survive redeploys
+- Captions and per-photo alt text in the gallery
+- A lightbox for viewing gallery photos full size
+- Pagination for the gallery and blog
+- Editing existing blog posts from the admin panel
 
 ## Acknowledgements
-CS50 Staff & Community — for the course and guidance.
 
-Bootstrap — for responsive front-end styling.
-
-Formspree — for handling the contact form submissions.
-
-Render — for deployment hosting.
-
-AI Assistance — used for scaffolding and debugging (permitted by CS50), but all final code and design choices are my own.
-
-My girlfriend Juliet - for being so supportive!
+- **CS50 staff and community**, for the course and guidance
+- **Bootstrap**, **Formspree**, and **Render**
+- **AI assistance**: used for scaffolding and debugging (permitted by CS50), and later for a cleanup pass on performance, security, and tests. Final code and design choices are my own.
+- **My girlfriend Juliet**, for being so supportive!
