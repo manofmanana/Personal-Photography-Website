@@ -9,7 +9,7 @@
 
       {% if post.image_url %}
       <div class="post-image-wrapper mb-3">
-        <img class="post-image" src="{{ post.image_url }}" alt="{{ post.title }}">
+        <img class="post-image" src="{{ post.image_url|web_url }}" alt="{{ post.title }}">
       </div>
       {% endif %}
 
@@ -24,7 +24,7 @@
 
 <style>
   .post-background {
-    background: url("{{ url_for('static', filename='photos/hero/IMG_3386.jpeg') }}") no-repeat center center fixed;
+    background: url("{{ 'photos/hero/IMG_3386.jpeg'|web_url }}") no-repeat center center fixed;
     background-size: cover;
     position: relative;
     z-index: 1;

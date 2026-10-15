@@ -15,6 +15,7 @@
           <div class="card-body">
             <h5 class="card-title">New Post</h5>
             <form method="POST" action="{{ url_for('admin_panel') }}" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <div class="form-group">
                 <label class="theme-label" style="color:#4a90e2 !important;">Title</label>
                 <input name="title" class="form-control" required>
@@ -94,6 +95,7 @@
             </td>
             <td>
               <form class="d-inline" method="POST" action="{{ url_for('admin_delete', post_id=p['id']) }}" onsubmit="return confirm('Delete this post?');">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="btn btn-sm btn-danger">Delete</button>
               </form>
             </td>
@@ -110,6 +112,7 @@
     <div class="card admin-card shadow-sm mb-4">
       <div class="card-body">
         <form method="POST" action="{{ url_for('gallery_upload') }}" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="form-group">
             <label class="theme-label" style="color:#4a90e2 !important;">Choose Photos</label>
             <!-- Controlled file input (multiple) -->
@@ -150,10 +153,11 @@
           <tr>
             <td>{{ g["id"] }}</td>
             <td>
-              <img src="{{ g['filename'] }}" alt="Photo" style="width: 60px; height: 60px; object-fit: cover;" class="rounded shadow-sm">
+              <img src="{{ g['filename']|web_url }}" alt="Photo" style="width: 60px; height: 60px; object-fit: cover;" class="rounded shadow-sm">
             </td>
             <td>
               <form method="POST" action="{{ url_for('gallery_edit', photo_id=g['id']) }}" class="d-inline">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <select name="tag" class="form-control form-control-sm d-inline-block" style="width:auto;">
                   <option value="nature" {% if g["tag"]=="nature" %}selected{% endif %}>Nature</option>
                   <option value="portraits" {% if g["tag"]=="portraits" %}selected{% endif %}>Portraits</option>
@@ -166,6 +170,7 @@
             <td>{{ g["created"] }}</td>
             <td>
               <form class="d-inline" method="POST" action="{{ url_for('gallery_delete', photo_id=g['id']) }}" onsubmit="return confirm('Delete this photo?');">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="btn btn-sm btn-danger">Delete</button>
               </form>
             </td>
@@ -182,7 +187,7 @@
 <!-- Styles -->
 <style>
   .admin-panel-background {
-    background: url("{{ url_for('static', filename='gallery_uploads/9b90e3d85e404ce085a6bf0471fb67d7_IMG_8613.jpeg') }}") no-repeat center center fixed;
+    background: url("{{ 'gallery_uploads/9b90e3d85e404ce085a6bf0471fb67d7_IMG_8613.jpeg'|web_url }}") no-repeat center center fixed;
     background-size: cover;
     position: relative;
     z-index: 1;

@@ -14,10 +14,10 @@
       </h2>
       <p class="post-meta">{{ p["kind"] }} • {{ p["created"] }}</p>
 
-      {% if p.get("image_url") %}
+      {% if p.image_url %}
       <div class="post-image-wrapper mb-3">
         <a href="{{ url_for('post_detail', post_id=p['id']) }}">
-          <img class="post-image" src="{{ p['image_url'] }}" alt="{{ p['title'] }}">
+          <img class="post-image" src="{{ p['image_url']|web_url }}" alt="{{ p['title'] }}">
         </a>
       </div>
       {% endif %}
@@ -38,7 +38,7 @@
 <!-- Styles -->
 <style>
   .blog-background {
-    background: url("{{ url_for('static', filename='photos/hero/IMG_3386.jpeg') }}") no-repeat center center fixed;
+    background: url("{{ 'photos/hero/IMG_3386.jpeg'|web_url }}") no-repeat center center fixed;
     background-size: cover;
     position: relative;
     z-index: 1;
