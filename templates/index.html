@@ -16,22 +16,22 @@
 
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img src="{{ 'photos/hero/IMG_3386.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Slide 1">
+      <img src="{{ 'photos/hero/IMG_3386.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Turquoise mountain lake beneath snow-capped peaks">
     </div>
     <div class="carousel-item">
-      <img src="{{ 'photos/hero/IMG_9365.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Slide 2">
+      <img src="{{ 'photos/hero/IMG_9365.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Waterfall spilling down a mossy rock face">
     </div>
     <div class="carousel-item">
-      <img src="{{ 'photos/hero/IMG_0601.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Slide 3">
+      <img src="{{ 'photos/hero/IMG_0601.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Coastal highway winding beneath green cliffs along the ocean">
     </div>
     <div class="carousel-item">
-      <img src="{{ 'photos/hero/IMG_1328.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Slide 4">
+      <img src="{{ 'photos/hero/IMG_1328.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Waves breaking over a rocky shoreline">
     </div>
     <div class="carousel-item">
-      <img src="{{ 'photos/hero/IMG_1329.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Slide 5">
+      <img src="{{ 'photos/hero/IMG_1329.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Pastel sunset over a harbor and its breakwater">
     </div>
     <div class="carousel-item">
-      <img src="{{ 'photos/hero/IMG_2815.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Slide 6">
+      <img src="{{ 'photos/hero/IMG_2815.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Climbers scaling a sandstone cliff">
     </div>
   </div>
 
@@ -78,7 +78,7 @@
       <div class="card-deck flex-wrap">
         <!-- Nature -->
         <a href="{{ url_for('gallery') }}?filter=nature" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none mb-3">
-          <img class="card-img-top featured-img" src="{{ 'photos/hero/featured/IMG_7855.jpeg'|web_url }}" alt="Nature">
+          <img class="card-img-top featured-img" src="{{ 'photos/hero/featured/IMG_7855.jpeg'|web_url }}" alt="Waterfall pouring into a canyon pool">
           <div class="card-body bg-white">
             <h5 class="card-title text-dark">Nature</h5>
             <p class="card-text text-dark">Mother Nature calls, and I answer.</p>
@@ -87,7 +87,7 @@
         </a>
         <!-- Portraits -->
         <a href="{{ url_for('gallery') }}?filter=portraits" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none mb-3">
-          <img class="card-img-top featured-img" src="{{ 'photos/hero/featured/IMG_8613.jpeg'|web_url }}" alt="Portraits">
+          <img class="card-img-top featured-img" src="{{ 'photos/hero/featured/IMG_8613.jpeg'|web_url }}" alt="Graduate in cap and stole posing on a campus walkway">
           <div class="card-body bg-white">
             <h5 class="card-title text-dark">Portraits</h5>
             <p class="card-text text-dark">My favorite faces.</p>
@@ -96,7 +96,7 @@
         </a>
         <!-- Experimental -->
         <a href="{{ url_for('gallery') }}?filter=experimental" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none mb-3">
-          <img class="card-img-top featured-img" src="{{ 'photos/hero/featured/IMG_5783.jpeg'|web_url }}" alt="Experimental">
+          <img class="card-img-top featured-img" src="{{ 'photos/hero/featured/IMG_5783.jpeg'|web_url }}" alt="Warm double-exposure portrait shot on film">
           <div class="card-body bg-white">
             <h5 class="card-title text-dark">Experimental</h5>
             <p class="card-text text-dark">Just me having fun.</p>
@@ -111,7 +111,7 @@
       <h2 class="section-title text-white">Photo of the Week</h2>
       <p class="mb-2 text-white">Get one photo + the latest blog in your inbox.</p>
       <form action="{{ url_for('subscribe') }}" method="POST" id="signupForm" class="form-inline flex-wrap" novalidate>
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label class="sr-only" for="email">Email</label>
         <input id="email" name="email" type="email" class="form-control mr-2 mb-2 flex-grow-1" placeholder="you@example.com" required>
         <button class="btn btn-copper mb-2" type="submit">Subscribe</button>

@@ -4,7 +4,7 @@
 <main class="admin-panel-background d-flex flex-column">
   <div class="container py-5">
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <h1 class="page-title" style="color:#4a90e2 !important;">Admin Control Center</h1>
+      <h1 class="page-title admin-accent">Admin Control Center</h1>
       <a href="{{ url_for('admin_logout') }}" class="btn btn-logout btn-sm">Log out</a>
     </div>
 
@@ -15,13 +15,13 @@
           <div class="card-body">
             <h5 class="card-title">New Post</h5>
             <form method="POST" action="{{ url_for('admin_panel') }}" enctype="multipart/form-data">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
               <div class="form-group">
-                <label class="theme-label" style="color:#4a90e2 !important;">Title</label>
+                <label class="theme-label admin-accent">Title</label>
                 <input name="title" class="form-control" required>
               </div>
               <div class="form-group">
-                <label class="theme-label" style="color:#4a90e2 !important;">Kind</label>
+                <label class="theme-label admin-accent">Kind</label>
                 <select name="kind" class="form-control">
                   <option>Journal</option>
                   <option>Note</option>
@@ -29,15 +29,15 @@
                 </select>
               </div>
               <div class="form-group">
-                <label class="theme-label" style="color:#4a90e2 !important;">Body</label>
+                <label class="theme-label admin-accent">Body</label>
                 <textarea name="body" rows="6" class="form-control" required></textarea>
               </div>
               <div class="form-group">
-                <label class="theme-label" style="color:#4a90e2 !important;">Upload Image (optional)</label>
+                <label class="theme-label admin-accent">Upload Image (optional)</label>
                 <!-- Controlled file input (single) -->
                 <div class="cf-wrap">
                   <input id="image" type="file" name="image" class="cf-input" accept="image/*">
-                  <label for="image" class="cf-label" style="color:#4a90e2 !important;">no file chosen</label>
+                  <label for="image" class="cf-label admin-accent">no file chosen</label>
                 </div>
               </div>
               <button class="btn btn-primary">Publish</button>
@@ -52,7 +52,7 @@
           <div class="card-body">
             <h5 class="card-title">Subscribers</h5>
             <a class="btn btn-outline-primary btn-sm mb-3" href="{{ url_for('export_subscribers') }}">Export CSV</a>
-            <ul class="list-unstyled mb-0" style="max-height: 260px; overflow:auto;">
+            <ul class="list-unstyled mb-0 admin-scroll">
               {% for s in subs %}
                 <li class="mb-1">{{ s["email"] }} <small class="text-muted">• {{ s["created"] }}</small></li>
               {% else %}
@@ -66,7 +66,7 @@
     </div>
 
     <!-- Posts Table -->
-    <h5 class="mb-3" style="color:#4a90e2 !important;">Posts</h5>
+    <h5 class="mb-3 admin-accent">Posts</h5>
     <div class="table-responsive mb-5">
       <table class="table admin-table table-bordered">
         <thead>
@@ -95,7 +95,7 @@
             </td>
             <td>
               <form class="d-inline" method="POST" action="{{ url_for('admin_delete', post_id=p['id']) }}" onsubmit="return confirm('Delete this post?');">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="btn btn-sm btn-danger">Delete</button>
               </form>
             </td>
@@ -108,21 +108,21 @@
     </div>
 
     <!-- Gallery Upload -->
-    <h5 class="mb-3" style="color:#4a90e2 !important;">Upload to Gallery</h5>
+    <h5 class="mb-3 admin-accent">Upload to Gallery</h5>
     <div class="card admin-card shadow-sm mb-4">
       <div class="card-body">
         <form method="POST" action="{{ url_for('gallery_upload') }}" enctype="multipart/form-data">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
           <div class="form-group">
-            <label class="theme-label" style="color:#4a90e2 !important;">Choose Photos</label>
+            <label class="theme-label admin-accent">Choose Photos</label>
             <!-- Controlled file input (multiple) -->
             <div class="cf-wrap">
               <input id="images" type="file" name="images" class="cf-input" accept="image/*" multiple required>
-              <label for="images" class="cf-label" style="color:#4a90e2 !important;">no file chosen</label>
+              <label for="images" class="cf-label admin-accent">no file chosen</label>
             </div>
           </div>
           <div class="form-group">
-            <label class="theme-label" style="color:#4a90e2 !important;">Tag</label>
+            <label class="theme-label admin-accent">Tag</label>
             <select name="tag" class="form-control" required>
               <option value="nature">Nature</option>
               <option value="portraits">Portraits</option>
@@ -136,7 +136,7 @@
     </div>
 
     <!-- Gallery Table -->
-    <h5 class="mb-3" style="color:#4a90e2 !important;">Gallery Photos</h5>
+    <h5 class="mb-3 admin-accent">Gallery Photos</h5>
     <div class="table-responsive">
       <table class="table admin-table table-bordered">
         <thead>
@@ -153,12 +153,12 @@
           <tr>
             <td>{{ g["id"] }}</td>
             <td>
-              <img src="{{ g['filename']|web_url }}" alt="Photo" style="width: 60px; height: 60px; object-fit: cover;" class="rounded shadow-sm">
+              <img src="{{ g['filename']|web_url }}" alt="{{ g['tag']|capitalize }} photo #{{ g['id'] }}" class="rounded shadow-sm admin-thumb">
             </td>
             <td>
               <form method="POST" action="{{ url_for('gallery_edit', photo_id=g['id']) }}" class="d-inline">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <select name="tag" class="form-control form-control-sm d-inline-block" style="width:auto;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <select name="tag" class="form-control form-control-sm d-inline-block w-auto">
                   <option value="nature" {% if g["tag"]=="nature" %}selected{% endif %}>Nature</option>
                   <option value="portraits" {% if g["tag"]=="portraits" %}selected{% endif %}>Portraits</option>
                   <option value="candids" {% if g["tag"]=="candids" %}selected{% endif %}>Candids</option>
@@ -170,7 +170,7 @@
             <td>{{ g["created"] }}</td>
             <td>
               <form class="d-inline" method="POST" action="{{ url_for('gallery_delete', photo_id=g['id']) }}" onsubmit="return confirm('Delete this photo?');">
-  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <button class="btn btn-sm btn-danger">Delete</button>
               </form>
             </td>
