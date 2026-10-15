@@ -15,15 +15,6 @@ CREATE TABLE IF NOT EXISTS subscribers (
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS messages (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  message TEXT NOT NULL,
-  created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
-
--- 🔹 New table for Gallery photos
 CREATE TABLE IF NOT EXISTS gallery (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   filename TEXT NOT NULL, -- relative path to file in static/gallery_uploads/

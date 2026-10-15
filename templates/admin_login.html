@@ -6,6 +6,7 @@
     <!-- Inline style guarantees white regardless of global styles -->
     <h1 class="page-title" style="color:#fff !important;">Admin Login</h1>
     <form method="POST" action="{{ url_for('admin_login') }}">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
       <div class="form-group">
         <label for="password" class="form-label theme-label">Password</label>
         <input id="password" name="password" type="password" class="form-control" required>
@@ -18,7 +19,7 @@
 <!-- Styles -->
 <style>
   .admin-background {
-    background: url("{{ url_for('static', filename='photos/hero/IMG_9365.jpeg') }}") no-repeat center center fixed;
+    background: url("{{ 'photos/hero/IMG_9365.jpeg'|web_url }}") no-repeat center center fixed;
     background-size: cover;
     position: relative;
     z-index: 1;

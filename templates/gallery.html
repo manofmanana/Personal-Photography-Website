@@ -23,7 +23,7 @@
       >
         <img
           class="img-fluid rounded shadow-sm gallery-img lazy-img"
-          src="{{ photo['filename'] }}"
+          src="{{ photo['filename']|web_url }}"
           alt="Photo"
           loading="lazy"
           style="width:100%; aspect-ratio:1 / 1; object-fit:cover;"
@@ -39,7 +39,7 @@
 <!-- Custom styles -->
 <style>
   .gallery-background {
-    background: url("{{ url_for('static', filename='photos/hero/IMG_0601.jpeg') }}") no-repeat center center fixed;
+    background: url("{{ 'photos/hero/IMG_0601.jpeg'|web_url }}") no-repeat center center fixed;
     background-size: cover;
     position: relative;
     z-index: 1;

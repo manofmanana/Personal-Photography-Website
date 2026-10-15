@@ -24,14 +24,14 @@
           {% if r.image_url %}
           <div class="post-image-wrapper mb-3">
             <a href="{{ url_for('post_detail', post_id=r.id) }}">
-              <img class="post-image" src="{{ r.image_url }}" alt="{{ r.title }}">
+              <img class="post-image" src="{{ r.image_url|web_url }}" alt="{{ r.title }}">
             </a>
           </div>
           {% endif %}
 
           <div class="post-body">
             <p>
-              {{ r.body[:250]|replace(query, "<mark>" ~ query ~ "</mark>")|safe }}
+              {{ r.body[:250]|highlight(query) }}
               {% if r.body|length > 250 %}...{% endif %}
             </p>
             <a href="{{ url_for('post_detail', post_id=r.id) }}" class="read-more">Read More →</a>
@@ -48,7 +48,7 @@
         <div class="col-md-4 mb-4 text-center">
           <div class="photo-card">
             <a href="{{ url_for('gallery') }}?filter={{ p.tag }}">
-              <img src="{{ p.filename }}" alt="{{ p.tag }}" class="img-fluid photo-thumb">
+              <img src="{{ p.filename|web_url }}" alt="{{ p.tag }}" class="img-fluid photo-thumb">
             </a>
             <p class="mt-2 text-white"><strong>{{ p.tag|capitalize }}</strong> • {{ p.created }}</p>
           </div>
@@ -65,7 +65,7 @@
 
 <style>
   .search-background {
-    background: url("{{ url_for('static', filename='photos/search/IMG_0714.jpeg') }}") no-repeat center center fixed;
+    background: url("{{ 'photos/search/IMG_0714.jpeg'|web_url }}") no-repeat center center fixed;
     background-size: cover;
     position: relative;
     z-index: 1;
