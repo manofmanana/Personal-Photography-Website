@@ -1,367 +1,173 @@
 {% extends "base.html" %}
-{% block title %}Alejandro Ines — Home{% endblock %}
+{% from "_macros.html" import photo, gallery_tile, lightbox %}
+{% block title %}Alejandro Ines — Photography{% endblock %}
 {% block body %}
 
-<!-- Hero Carousel with Copper Sphere -->
-<header id="heroCarousel" class="carousel slide hero-wrap" data-ride="carousel" data-interval="3000">
-  <!-- Indicators -->
-  <ol class="carousel-indicators">
-    <li data-target="#heroCarousel" data-slide-to="0" class="active"></li>
-    <li data-target="#heroCarousel" data-slide-to="1"></li>
-    <li data-target="#heroCarousel" data-slide-to="2"></li>
-    <li data-target="#heroCarousel" data-slide-to="3"></li>
-    <li data-target="#heroCarousel" data-slide-to="4"></li>
-    <li data-target="#heroCarousel" data-slide-to="5"></li>
-  </ol>
+{% set slides = [
+  ('photos/hero/IMG_0601.jpeg', 'Coastal highway winding beneath green cliffs along the ocean'),
+  ('photos/hero/IMG_3386.jpeg', 'Turquoise mountain lake beneath snow-capped peaks'),
+  ('photos/hero/IMG_9365.jpeg', 'Waterfall spilling down a mossy rock face'),
+  ('photos/hero/IMG_1329.jpeg', 'Pastel sunset over a harbor and its breakwater'),
+  ('photos/hero/IMG_1328.jpeg', 'Waves breaking over a rocky shoreline'),
+  ('photos/hero/IMG_2815.jpeg', 'Climbers scaling a sandstone cliff'),
+] %}
 
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img src="{{ 'photos/hero/IMG_3386.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Turquoise mountain lake beneath snow-capped peaks">
-    </div>
-    <div class="carousel-item">
-      <img src="{{ 'photos/hero/IMG_9365.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Waterfall spilling down a mossy rock face">
-    </div>
-    <div class="carousel-item">
-      <img src="{{ 'photos/hero/IMG_0601.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Coastal highway winding beneath green cliffs along the ocean">
-    </div>
-    <div class="carousel-item">
-      <img src="{{ 'photos/hero/IMG_1328.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Waves breaking over a rocky shoreline">
-    </div>
-    <div class="carousel-item">
-      <img src="{{ 'photos/hero/IMG_1329.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Pastel sunset over a harbor and its breakwater">
-    </div>
-    <div class="carousel-item">
-      <img src="{{ 'photos/hero/IMG_2815.jpeg'|web_url }}" class="d-block w-100 hero-img" alt="Climbers scaling a sandstone cliff">
-    </div>
-  </div>
+<section class="hero" aria-label="Featured photographs">
+  {% for path, alt in slides %}
+    {% if loop.first %}
+  <img class="hero-slide is-active" src="{{ path|web_url }}" alt="{{ alt }}" fetchpriority="high">
+    {% else %}
+  <img class="hero-slide" data-src="{{ path|web_url }}" alt="{{ alt }}">
+    {% endif %}
+  {% endfor %}
 
-  <!-- Controls -->
-  <a class="carousel-control-prev" href="#heroCarousel" role="button" data-slide="prev">
-    <span class="carousel-control-prev-icon copper-arrow" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#heroCarousel" role="button" data-slide="next">
-    <span class="carousel-control-next-icon copper-arrow" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
-
-  <!-- Shiny 3D Copper Sphere with Dense Glowing Ripples -->
-  <div class="copper-sphere d-flex align-items-center justify-content-center text-center">
-    <h1 class="hero-title">Welcome to Alejandro's Photography Site:<br>How I see the world!</h1>
-    <div class="ripple ripple1"></div>
-    <div class="ripple ripple2"></div>
-    <div class="ripple ripple3"></div>
-    <div class="ripple ripple4"></div>
-    <div class="ripple ripple5"></div>
-    <div class="ripple ripple6"></div>
-  </div>
-</header>
-
-<!-- Copper Divider -->
-<div class="copper-divider"></div>
-
-<!-- Main content with background -->
-<main class="home-background d-flex flex-column">
-  <div class="container py-5">
-    <!-- Food for Thought -->
-    <section class="mb-5">
-      <h2 class="section-title text-white">Food for Thought</h2>
-      <blockquote id="quoteBox" class="styled-quote dark-quote-box">
-        <p class="mb-2 text-white fade-quote" id="quoteText"></p>
-        <footer class="blockquote-footer text-white"><cite id="quoteAuthor"></cite></footer>
-      </blockquote>
-    </section>
-
-    <!-- Featured Work -->
-    <section class="mb-5">
-      <h2 class="section-title text-white">Featured Work</h2>
-      <div class="card-deck flex-wrap">
-        <!-- Nature -->
-        <a href="{{ url_for('gallery') }}?filter=nature" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none mb-3">
-          <img class="card-img-top featured-img" src="{{ 'photos/hero/featured/IMG_7855.jpeg'|web_url }}" alt="Waterfall pouring into a canyon pool">
-          <div class="card-body bg-white">
-            <h5 class="card-title text-dark">Nature</h5>
-            <p class="card-text text-dark">Mother Nature calls, and I answer.</p>
-            <span class="btn btn-outline-dark btn-sm">Explore Nature</span>
-          </div>
-        </a>
-        <!-- Portraits -->
-        <a href="{{ url_for('gallery') }}?filter=portraits" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none mb-3">
-          <img class="card-img-top featured-img" src="{{ 'photos/hero/featured/IMG_8613.jpeg'|web_url }}" alt="Graduate in cap and stole posing on a campus walkway">
-          <div class="card-body bg-white">
-            <h5 class="card-title text-dark">Portraits</h5>
-            <p class="card-text text-dark">My favorite faces.</p>
-            <span class="btn btn-outline-dark btn-sm">Explore Portraits</span>
-          </div>
-        </a>
-        <!-- Experimental -->
-        <a href="{{ url_for('gallery') }}?filter=experimental" class="card card-hover shadow-sm equal-card copper-frame text-decoration-none mb-3">
-          <img class="card-img-top featured-img" src="{{ 'photos/hero/featured/IMG_5783.jpeg'|web_url }}" alt="Warm double-exposure portrait shot on film">
-          <div class="card-body bg-white">
-            <h5 class="card-title text-dark">Experimental</h5>
-            <p class="card-text text-dark">Just me having fun.</p>
-            <span class="btn btn-outline-dark btn-sm">Explore Experimental</span>
-          </div>
-        </a>
+  <div class="hero-content">
+    <div class="container">
+      <span class="eyebrow">Photography by Alejandro Ines</span>
+      <h1>How I see <em>the world.</em></h1>
+      <p class="hero-lead">Nature, portraits, and the people I love. Now booking portraits, graduations, and events.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="{{ url_for('gallery') }}">View the work</a>
+        <a class="btn btn-ghost" href="{{ url_for('contact') }}">Book a shoot</a>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <!-- Subscribe -->
-    <section class="mb-5">
-      <h2 class="section-title text-white">Photo of the Week</h2>
-      <p class="mb-2 text-white">Get one photo + the latest blog in your inbox.</p>
-      <form action="{{ url_for('subscribe') }}" method="POST" id="signupForm" class="form-inline flex-wrap" novalidate>
+  <div class="hero-dots" aria-label="Choose slide">
+    {% for _ in slides %}
+    <button type="button" aria-label="Show photo {{ loop.index }}" aria-current="{{ 'true' if loop.first else 'false' }}"></button>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- Selected work -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Selected work</span>
+        <h2>Moments worth <em>keeping</em></h2>
+      </div>
+      <a class="link-arrow" href="{{ url_for('gallery') }}">See all {{ categories|sum(attribute='count') }} photos <span>→</span></a>
+    </div>
+    <div class="justified reveal" data-gallery>
+      {% for p in selected %}{{ gallery_tile(p) }}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Browse</span>
+        <h2>By subject</h2>
+      </div>
+    </div>
+    <div class="categories reveal">
+      {% for c in categories %}
+      <a class="category" href="{{ url_for('gallery', filter=c.tag) }}">
+        {{ photo(c.cover['filename'], c.tag|capitalize ~ ' photography') }}
+        <div class="category-text"><h3>{{ c.tag }}</h3><span>{{ c.count }}</span></div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Work with me</span>
+        <h2>Let's make something <em>together</em></h2>
+      </div>
+      <a class="link-arrow" href="{{ url_for('services') }}">Services &amp; booking <span>→</span></a>
+    </div>
+    <div class="services reveal">
+      {% for s in services %}
+      <a class="service-card" href="{{ url_for('services') }}#{{ s.slug }}">
+        <div class="media">{% if s.photo %}{{ photo(s.photo, s.title ~ ' photography example') }}{% endif %}</div>
+        <h3>{{ s.title }}</h3>
+        <p>{{ s.blurb }}</p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section class="section">
+  <div class="container">
+    <div class="split reveal">
+      <div class="media">{{ photo('photos/about/IMG_6527.jpeg', 'Portrait of Alejandro Ines') }}</div>
+      <div>
+        <span class="eyebrow">About</span>
+        <h2>Hola, I'm <em>Alejandro.</em></h2>
+        <p class="lead">I see photography as a data collection tool of sorts. Cameras collect data on where light was at a given moment. We as humans then give that light, that data, meaning.</p>
+        <a class="link-arrow" href="{{ url_for('about') }}">More about me <span>→</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if posts %}
+<!-- Journal -->
+<section class="section">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">Journal</span>
+        <h2>Shutter Speed <em>Soapbox</em></h2>
+      </div>
+      <a class="link-arrow" href="{{ url_for('blog') }}">All entries <span>→</span></a>
+    </div>
+    <div class="posts reveal">
+      {% for p in posts %}
+      <a class="post-card" href="{{ url_for('post_detail', post_id=p.id) }}">
+        {% if p.image_url %}<div class="media">{{ photo(p.image_url, p.title) }}</div>{% endif %}
+        <div class="post-meta">{{ p.kind }}<span class="dot">·</span>{{ p.created|pretty_date }}</div>
+        <h3>{{ p.title }}</h3>
+        <p>{{ p.body|truncate(140) }}</p>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Call to action + newsletter -->
+<section class="section">
+  <div class="container">
+    <div class="cta reveal">
+      <img class="fade-img" src="{{ 'photos/hero/IMG_1329.jpeg'|web_url }}" alt="" loading="lazy">
+      <div class="cta-content">
+        <span class="eyebrow">Now booking</span>
+        <h2>Have a shoot in mind?</h2>
+        <p>Portraits, graduations, events, or something you haven't seen before. Tell me about it and I'll get back to you.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="{{ url_for('contact') }}">Book a shoot</a>
+          <a class="btn btn-ghost" href="{{ url_for('services') }}">See services</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="split newsletter reveal">
+      <div>
+        <span class="eyebrow">Photo of the week</span>
+        <h3>One photo and the latest journal entry, in your inbox.</h3>
+      </div>
+      <form action="{{ url_for('subscribe') }}" method="POST" class="inline-form">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <label class="sr-only" for="email">Email</label>
-        <input id="email" name="email" type="email" class="form-control mr-2 mb-2 flex-grow-1" placeholder="you@example.com" required>
-        <button class="btn btn-copper mb-2" type="submit">Subscribe</button>
+        <input id="email" name="email" type="email" class="input" placeholder="you@example.com" required>
+        <button class="btn btn-primary" type="submit">Subscribe</button>
       </form>
-    </section>
+    </div>
   </div>
-</main>
+</section>
 
-<!-- Styles -->
-<style>
-  :root { --copper: #b87333; }
-
-  .hero-wrap { position: relative; }
-  .hero-img { object-fit: cover; }
-
-  /* Background */
-  .home-background {
-    background: url("{{ 'photos/hero/homepage/IMG_6140.jpeg'|web_url }}") no-repeat center center/cover;
-  }
-
-  /* Copper Divider with shimmer */
-  .copper-divider {
-    position: relative;
-    width: 100%;
-    height: 14px;
-    border-radius: 10px;
-    background: linear-gradient(90deg,
-      #8e4f25 0%,
-      #b87333 18%,
-      #e6b389 38%,
-      #b87333 58%,
-      #7f471f 78%,
-      #d9863f 100%);
-    overflow: hidden;
-    margin: 0 auto;
-  }
-  .copper-divider::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -30%;
-    width: 30%;
-    height: 100%;
-    background: linear-gradient(120deg, rgba(255,255,255,0.7), rgba(255,255,255,0));
-    animation: shimmer 4s infinite;
-  }
-  @keyframes shimmer {
-    0%   { left: -30%; }
-    50%  { left: 100%; }
-    100% { left: 100%; }
-  }
-
-  /* Shiny 3D Copper Sphere */
-  .copper-sphere {
-    position: absolute;
-    top: 15%;
-    left: 50%;
-    transform: translate(-50%, 0);
-    width: 380px;
-    height: 380px;
-    border-radius: 50%;
-    background:
-      radial-gradient(circle at 32% 28%, #ffd2a1 0%, #ffb366 22%, rgba(255,179,102,0.65) 32%, rgba(184,115,51,0.3) 46%, rgba(184,115,51,0.1) 58%, rgba(0,0,0,0.05) 70%),
-      radial-gradient(circle at 30% 30%, #ffb366, #b87333 72%);
-    box-shadow:
-      inset -24px -24px 46px rgba(0,0,0,0.45),
-      inset 14px 14px 36px rgba(255,255,255,0.28),
-      0 0 60px rgba(184,115,51,0.75);
-    animation: glow 6s ease-in-out infinite;
-  }
-  .copper-sphere::before {
-    content: "";
-    position: absolute;
-    top: 8%;
-    left: 14%;
-    width: 60%;
-    height: 40%;
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,0.70) 0%, rgba(255,255,255,0.25) 45%, rgba(255,255,255,0) 70%);
-    filter: blur(1.5px);
-  }
-  .copper-sphere h1 {
-    font-size: 1.9rem;
-    color: #fff;
-    z-index: 2;
-    position: relative;
-    text-shadow: 0 0 8px rgba(0,0,0,0.6);
-  }
-  @keyframes glow {
-    0%, 100% { box-shadow: inset -24px -24px 46px rgba(0,0,0,0.45),
-                          inset 14px 14px 36px rgba(255,255,255,0.28),
-                          0 0 60px rgba(184,115,51,0.70); }
-    50% { box-shadow: inset -18px -18px 34px rgba(0,0,0,0.35),
-                   inset 20px 20px 42px rgba(255,255,255,0.38),
-                   0 0 95px rgba(217,134,63,0.92); }
-  }
-
-  /* Ripple Waves */
-  .copper-sphere .ripple {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 380px;
-    height: 380px;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    border: 3px solid rgba(184, 115, 51, 0.7);
-    box-shadow: 0 0 25px rgba(184,115,51,0.6);
-    animation: ripple 3s linear infinite;
-  }
-  .ripple1 { animation-delay: 0s; }
-  .ripple2 { animation-delay: 0.5s; }
-  .ripple3 { animation-delay: 1s; }
-  .ripple4 { animation-delay: 1.5s; }
-  .ripple5 { animation-delay: 2s; }
-  .ripple6 { animation-delay: 2.5s; }
-  @keyframes ripple {
-    0%   { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
-    100% { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
-  }
-
-  /* Copper Frames */
-  .copper-frame { border: 6px solid var(--copper); border-radius: 15px; }
-
-  /* Copper Button */
-  .btn-copper {
-    background: linear-gradient(135deg, #b87333, #d9863f);
-    color: white; border: none;
-  }
-  .btn-copper:hover {
-    background: linear-gradient(135deg, #a05d2e, #c27636);
-    color: white;
-  }
-
-  /* Carousel Indicators Copper */
-  .carousel-indicators li { background-color: var(--copper); }
-
-  /* Quote Box */
-  #quoteBox {
-    background: rgba(0,0,0,0.75);
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    border-left: 6px solid var(--copper) !important;
-  }
-  .blockquote-footer::before {
-    content: "~ ";
-    color: inherit !important;
-  }
-
-  /* --- MOBILE OPTIMIZATION (hero fullscreen) --- */
-  @media (max-width: 768px) {
-    .hero-wrap {
-      height: 100vh;
-      min-height: 100vh;
-    }
-    .hero-wrap .carousel-inner,
-    .hero-wrap .carousel-item,
-    .hero-wrap .hero-img {
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .copper-sphere {
-      width: 260px;
-      height: 260px;
-      top: 12%;
-    }
-    .copper-sphere h1 {
-      font-size: 1.3rem;
-      line-height: 1.4;
-      padding: 0 10px;
-    }
-    .copper-sphere .ripple {
-      width: 260px;
-      height: 260px;
-    }
-    .card-deck {
-      display: flex;
-      flex-direction: column;
-    }
-    .card {
-      width: 100%;
-      margin-bottom: 1rem;
-    }
-    #signupForm input {
-      flex: 1 1 100%;
-      margin-bottom: 0.5rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .hero-wrap {
-      height: 100vh;
-      min-height: 100vh;
-    }
-    .hero-wrap .carousel-inner,
-    .hero-wrap .carousel-item,
-    .hero-wrap .hero-img {
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .copper-sphere {
-      width: 200px;
-      height: 200px;
-      top: 10%;
-    }
-    .copper-sphere h1 {
-      font-size: 1rem;
-    }
-    .copper-sphere .ripple {
-      width: 200px;
-      height: 200px;
-    }
-  }
-</style>
-
-<!-- Scripts -->
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const quotes = [
-    { text: "Even the darkest night will end and the sun will rise.", author: "Victor Hugo" },
-    { text: "We are the ones we have been waiting for.", author: "June Jordan" },
-    { text: "Another world is not only possible, she is on her way.", author: "Arundhati Roy" },
-    { text: "Not all those who wander are lost.", author: "J.R.R. Tolkien" },
-    { text: "Do I dare disturb the universe?", author: "T.S. Eliot" },
-    { text: "With great power comes great responsibility.", author: "Spider-Man" }
-  ];
-
-  let index = 0;
-  const textEl = document.getElementById("quoteText");
-  const authorEl = document.getElementById("quoteAuthor");
-
-  function showQuote(q) {
-    textEl.innerHTML = `<em>"${q.text}"</em>`;
-    authorEl.innerText = q.author;
-  }
-  showQuote(quotes[0]);
-
-  function updateQuote() {
-    textEl.classList.add("fade-out");
-    setTimeout(() => {
-      const quote = quotes[index];
-      showQuote(quote);
-      textEl.classList.remove("fade-out");
-    }, 2000);
-    index = (index + 1) % quotes.length;
-  }
-
-  setInterval(updateQuote, 10000);
-});
-</script>
+{{ lightbox() }}
 {% endblock %}

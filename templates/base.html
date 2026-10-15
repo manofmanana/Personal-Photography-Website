@@ -3,8 +3,15 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>{% block title %}{{ site_title }}{% endblock %}</title>
-  <meta name="description" content="Photography and writing by Alejandro Ines: nature, portraits, candids, and experiments.">
+  <title>{% block title %}{{ site_title }} — Photography{% endblock %}</title>
+  {% set description %}{% block description %}Photography by Alejandro Ines: nature, portraits, and candid moments. Available for portraits, graduations, and events.{% endblock %}{% endset %}
+  <meta name="description" content="{{ description|trim }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ self.title()|trim }}">
+  <meta property="og:description" content="{{ description|trim }}">
+  <meta property="og:image" content="{{ request.url_root.rstrip('/') }}{% block og_image %}{{ 'photos/hero/IMG_0601.jpeg'|web_url }}{% endblock %}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#0b0b0c">
   <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
 
   <!-- Apply the saved (or system) theme before first paint to avoid a flash -->
@@ -15,72 +22,95 @@
       if (theme !== "theme-light" && theme !== "theme-dark") {
         theme = window.matchMedia("(prefers-color-scheme: light)").matches ? "theme-light" : "theme-dark";
       }
-      document.documentElement.classList.add(theme);
+      document.documentElement.classList.add(theme, "js");
     })();
   </script>
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" crossorigin="anonymous">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-<body>
-<nav class="navbar navbar-expand-md navbar-dark bg-gradient shadow-sm">
-  <a class="navbar-brand font-logo" href="{{ url_for('index') }}">Alejandro Ines</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navMain"
-          aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div id="navMain" class="collapse navbar-collapse">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item {% if request.endpoint=='gallery' %}active{% endif %}">
-        <a class="nav-link" href="{{ url_for('gallery') }}">Gallery</a>
-      </li>
-      <li class="nav-item {% if request.endpoint=='blog' %}active{% endif %}">
-        <a class="nav-link" href="{{ url_for('blog') }}">Blog</a>
-      </li>
-      <li class="nav-item {% if request.endpoint=='about' %}active{% endif %}">
-        <a class="nav-link" href="{{ url_for('about') }}">About</a>
-      </li>
-      <li class="nav-item {% if request.endpoint=='contact' %}active{% endif %}">
-        <a class="nav-link" href="{{ url_for('contact') }}">Contact</a>
-      </li>
-    </ul>
+{% set nav = [('gallery', 'Work'), ('services', 'Services'), ('blog', 'Journal'), ('about', 'About')] %}
+<body class="page-{{ request.endpoint or 'error' }}">
+<a class="skip-link" href="#main">Skip to content</a>
 
-    <!-- Tools -->
-    <div class="navbar-tools d-flex align-items-center">
-      <form class="form-inline my-2 my-md-0 mr-md-2 flex-nowrap" action="{{ url_for('search') }}" method="get" role="search">
-        <input id="siteSearch" name="q" class="form-control form-control-sm mr-2" type="search"
-               placeholder="Search the site" aria-label="Search the site" value="{{ request.args.get('q', '') if request.endpoint == 'search' }}">
-        <button id="searchBtn" class="btn btn-outline-light btn-sm" type="submit">Go</button>
-      </form>
-      <button id="toggleTheme" class="btn btn-copper btn-sm" type="button" aria-label="Switch between light and dark theme">Theme</button>
-    </div>
+<header class="site-header" id="siteHeader">
+  <div class="container">
+    <a class="wordmark" href="{{ url_for('index') }}">Alejandro Ines</a>
+
+    <nav class="nav" id="siteNav" aria-label="Main">
+      <ul class="nav-links">
+        {% for endpoint, label in nav %}
+        <li><a href="{{ url_for(endpoint) }}" {% if request.endpoint == endpoint or (endpoint == 'blog' and request.endpoint == 'post_detail') %}aria-current="page"{% endif %}>{{ label }}</a></li>
+        {% endfor %}
+      </ul>
+      <div class="nav-tools">
+        <a class="icon-btn" href="{{ url_for('search') }}" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
+        </a>
+        <button class="icon-btn" id="toggleTheme" type="button" aria-label="Switch between light and dark theme">
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" stroke-linejoin="round"/></svg>
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke-linecap="round"/></svg>
+        </button>
+        <a class="btn btn-primary btn-sm" href="{{ url_for('contact') }}">Book a shoot</a>
+      </div>
+    </nav>
+
+    <button class="icon-btn menu-toggle" id="menuToggle" type="button" aria-controls="siteNav" aria-expanded="false" aria-label="Open menu">
+      <svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 8h16M4 16h16" stroke-linecap="round"/></svg>
+      <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg>
+    </button>
   </div>
-</nav>
+</header>
 
 {% with msgs = get_flashed_messages(with_categories=True) %}
 {% if msgs %}
-<div class="container mt-3">
+<div class="flashes" role="status">
   {% for category, msg in msgs %}
-  <div class="alert alert-{{ category if category in ('success', 'warning', 'danger') else 'info' }} alert-dismissible fade show" role="alert">
-    {{ msg }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <div class="flash flash-{{ category }}">
+    <span>{{ msg }}</span>
+    <button type="button" aria-label="Dismiss" data-dismiss>&times;</button>
   </div>
   {% endfor %}
 </div>
 {% endif %}
 {% endwith %}
 
+<main id="main">
 {% block body %}{% endblock %}
+</main>
 
 <footer class="site-footer">
-  <div class="container text-center">
-    <small class="footer-text">&copy; <span id="year"></span> Alejandro Ines — All rights reserved.</small>
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <a class="wordmark" href="{{ url_for('index') }}">Alejandro Ines</a>
+        <p>Photographs of beautiful places and the people I love. Available for portraits, graduations, and events.</p>
+        <a class="link-arrow" href="{{ url_for('contact') }}">Book a shoot <span>→</span></a>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul>
+          {% for endpoint, label in nav %}<li><a href="{{ url_for(endpoint) }}">{{ label }}</a></li>{% endfor %}
+        </ul>
+      </div>
+      <div>
+        <h4>Say hello</h4>
+        <ul>
+          <li><a href="mailto:{{ contact_email }}">{{ contact_email }}</a></li>
+          <li><a href="{{ url_for('contact') }}">Contact form</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; {{ current_year }} Alejandro Ines. All rights reserved.</span>
+      <a href="{{ url_for('admin_login') }}">Admin</a>
+    </div>
   </div>
 </footer>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

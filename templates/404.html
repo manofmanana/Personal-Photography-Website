@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Not found — Alejandro Ines{% endblock %}
+{% block body %}
+<div class="container not-found">
+  <div>
+    <h1>404</h1>
+    <p class="muted">This frame didn't make the final cut.</p>
+    <a class="btn btn-primary" href="{{ url_for('index') }}">Back home</a>
+  </div>
+</div>
+{% endblock %}
